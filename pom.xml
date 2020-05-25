@@ -26,6 +26,7 @@
         <shared.resources.version>0.3.6</shared.resources.version>
         <sonar.jacoco.reportPaths>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPaths>
         <three-ds-server-storage-proto.version>1.9-a75148d</three-ds-server-storage-proto.version>
+        <three-ds-server-domain-lib.version>1.0.3</three-ds-server-domain-lib.version>
     </properties>
 
     <dependencies>
@@ -55,6 +56,11 @@
             <artifactId>three-ds-server-storage-proto</artifactId>
             <version>${three-ds-server-storage-proto.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.rbkmoney</groupId>
+            <artifactId>three-ds-server-domain-lib</artifactId>
+            <version>${three-ds-server-domain-lib.version}</version>
+        </dependency>
 
         <!--spring-->
         <dependency>
@@ -64,6 +70,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-validator</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.hibernate</groupId>
@@ -86,6 +102,15 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
         </dependency>
 
         <!--test-->
