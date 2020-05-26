@@ -14,8 +14,8 @@ import java.sql.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "rreq_transaction_info")
-public class RReqTransactionInfoEntity implements Serializable {
+@Table(name = "challenge_flow_transaction_info")
+public class ChallengeFlowTransactionInfoEntity implements Serializable {
 
     @Id
     private String id;
