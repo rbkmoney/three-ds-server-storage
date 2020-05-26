@@ -18,7 +18,8 @@ import java.sql.Date;
 public class ChallengeFlowTransactionInfoEntity implements Serializable {
 
     @Id
-    private String id;
+    @Column(name = "transaction_id ")
+    private String transactionId;
 
     @Column(name = "device_channel")
     private String deviceChannel;

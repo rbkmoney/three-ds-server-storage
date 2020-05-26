@@ -17,9 +17,6 @@ import java.io.Serializable;
 public class SerialNumEntity implements Serializable {
 
     @Id
-    @GeneratedValue
-    private long id;
-
     @Column(name = "provider_id")
     private String providerId;
 
