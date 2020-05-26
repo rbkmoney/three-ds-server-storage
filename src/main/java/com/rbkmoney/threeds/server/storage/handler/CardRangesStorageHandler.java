@@ -2,6 +2,7 @@ package com.rbkmoney.threeds.server.storage.handler;
 
 import com.rbkmoney.damsel.three_ds_server_storage.*;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
+import com.rbkmoney.threeds.server.storage.mapper.CardRangeMapper;
 import com.rbkmoney.threeds.server.storage.repository.CardRangesRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.thrift.TException;
@@ -16,8 +17,7 @@ import static java.util.stream.Collectors.toList;
 public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
     private final CardRangesRepository repository;
-
-    // TODO [a.romanov]: mappers
+    private final CardRangeMapper mapper;
 
     @Override
     public void initRBKMoneyPreparationFlow(InitRBKMoneyPreparationFlowRequest initRBKMoneyPreparationFlowRequest) throws TException {
@@ -30,9 +30,7 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
         List<CardRangeEntity> entities = repository.findByProviderId(providerId);
 
         List<CardRange> cardRanges = entities.stream()
-                .map(e -> new CardRange()
-                        .setRangeStart(e.getRangeStart())
-                        .setRangeEnd(e.getRangeEnd()))
+                .map(mapper::toDomain)
                 .collect(toList());
 
         // TODO [a.romanov]: lastUpdatedAt?
