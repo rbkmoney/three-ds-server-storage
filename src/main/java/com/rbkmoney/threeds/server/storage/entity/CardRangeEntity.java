@@ -17,7 +17,7 @@ import java.io.Serializable;
 public class CardRangeEntity implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "provider_id")
