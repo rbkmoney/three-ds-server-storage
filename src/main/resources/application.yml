@@ -12,6 +12,11 @@ management:
   endpoint.health.show-details: always
 
 spring:
+  application:
+    name: @project.name@
+  output:
+    ansi:
+      enabled: always
   jpa:
     database: postgresql
     properties:

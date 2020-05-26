@@ -3,6 +3,7 @@ package com.rbkmoney.threeds.server.storage.handler;
 import com.rbkmoney.damsel.three_ds_server_storage.ChallengeFlowTransactionInfo;
 import com.rbkmoney.damsel.three_ds_server_storage.ChallengeFlowTransactionInfoStorageSrv;
 import com.rbkmoney.threeds.server.storage.entity.ChallengeFlowTransactionInfoEntity;
+import com.rbkmoney.threeds.server.storage.exception.ChallengeFlowTransactionInfoNotFoundException;
 import com.rbkmoney.threeds.server.storage.mapper.ChallengeFlowTransactionInfoMapper;
 import com.rbkmoney.threeds.server.storage.repository.ChallengeFlowTransactionInfoRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,8 @@ public class ChallengeFlowTransactionInfoStorageHandler implements ChallengeFlow
 
     @Override
     public ChallengeFlowTransactionInfo getChallengeFlowTransactionInfo(String transactionId) {
-        ChallengeFlowTransactionInfoEntity entity = repository.getOne(transactionId);
-        return mapper.toDomain(entity);
+        return repository.findByTransactionId(transactionId)
+                .map(mapper::toDomain)
+                .orElseThrow(() -> new ChallengeFlowTransactionInfoNotFoundException("transactionId=" + transactionId));
     }
 }

@@ -4,7 +4,7 @@ import com.rbkmoney.damsel.three_ds_server_storage.ChallengeFlowTransactionInfo;
 import com.rbkmoney.threeds.server.storage.entity.ChallengeFlowTransactionInfoEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Service
 public class ChallengeFlowTransactionInfoMapper {
@@ -14,7 +14,7 @@ public class ChallengeFlowTransactionInfoMapper {
                 .transactionId(domain.getTransactionId())
                 .acsDecConInd(domain.getAcsDecConInd())
                 .deviceChannel(domain.getDeviceChannel())
-                .decoupledAuthMaxTime(Date.valueOf(domain.getDecoupledAuthMaxTime()))
+                .decoupledAuthMaxTime(LocalDateTime.parse(domain.getDecoupledAuthMaxTime()))
                 .build();
     }
 

@@ -5,9 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Builder
@@ -25,7 +28,7 @@ public class ChallengeFlowTransactionInfoEntity implements Serializable {
     private String deviceChannel;
 
     @Column(name = "decoupled_auth_max_time")
-    private Date decoupledAuthMaxTime;
+    private LocalDateTime decoupledAuthMaxTime;
 
     @Column(name = "acs_dec_con_ind")
     private String acsDecConInd;
