@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SerialNumRepository extends JpaRepository<SerialNumEntity, Long> {
 
-    SerialNumEntity findByProviderId(String providerId);
 }

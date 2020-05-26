@@ -11,7 +11,7 @@ public class ChallengeFlowTransactionInfoMapper {
 
     public ChallengeFlowTransactionInfoEntity toEntity(ChallengeFlowTransactionInfo domain) {
         return ChallengeFlowTransactionInfoEntity.builder()
-                .id(domain.getTransactionId())
+                .transactionId(domain.getTransactionId())
                 .acsDecConInd(domain.getAcsDecConInd())
                 .deviceChannel(domain.getDeviceChannel())
                 .decoupledAuthMaxTime(Date.valueOf(domain.getDecoupledAuthMaxTime()))
@@ -20,7 +20,7 @@ public class ChallengeFlowTransactionInfoMapper {
 
     public ChallengeFlowTransactionInfo toDomain(ChallengeFlowTransactionInfoEntity entity) {
         return new ChallengeFlowTransactionInfo()
-                .setTransactionId(entity.getId())
+                .setTransactionId(entity.getTransactionId())
                 .setAcsDecConInd(entity.getAcsDecConInd())
                 .setDeviceChannel(entity.getDeviceChannel())
                 .setDecoupledAuthMaxTime(entity.getDecoupledAuthMaxTime().toString());
