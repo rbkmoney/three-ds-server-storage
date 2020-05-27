@@ -7,10 +7,12 @@ import com.rbkmoney.threeds.server.storage.mapper.SerialNumMapper;
 import com.rbkmoney.threeds.server.storage.repository.CardRangeRepository;
 import com.rbkmoney.threeds.server.storage.repository.SerialNumRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PreparationFlowDataUpdater {
@@ -31,6 +33,14 @@ public class PreparationFlowDataUpdater {
     public void update(RBKMoneyPreparationResponse response) {
         String providerId = response.getProviderId();
         String serialNum = response.getSerialNum();
+
+        log.info("Update preparation flow data for providerId={}: " +
+                        "serialNum={}, cardRanges=[added={}, modified={}, deleted={}]",
+                providerId,
+                serialNum,
+                response.getAddedCardRanges().size(),
+                response.getModifiedCardRanges().size(),
+                response.getDeletedCardRanges().size());
 
         cardRangeRepository.saveAll(cardRangeMapper.toEntities(response.getAddedCardRanges(), providerId));
         cardRangeRepository.saveAll(cardRangeMapper.toEntities(response.getModifiedCardRanges(), providerId));

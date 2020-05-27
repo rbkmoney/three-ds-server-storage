@@ -7,8 +7,10 @@ import com.rbkmoney.threeds.server.storage.exception.ChallengeFlowTransactionInf
 import com.rbkmoney.threeds.server.storage.mapper.ChallengeFlowTransactionInfoMapper;
 import com.rbkmoney.threeds.server.storage.repository.ChallengeFlowTransactionInfoRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChallengeFlowTransactionInfoStorageHandler implements ChallengeFlowTransactionInfoStorageSrv.Iface {
@@ -19,11 +21,14 @@ public class ChallengeFlowTransactionInfoStorageHandler implements ChallengeFlow
     @Override
     public void saveChallengeFlowTransactionInfo(ChallengeFlowTransactionInfo transactionInfo) {
         ChallengeFlowTransactionInfoEntity entity = mapper.toEntity(transactionInfo);
+
+        log.debug("Save challengeFlowTransactionInfo with transactionId={}", transactionInfo.getTransactionId());
         repository.save(entity);
     }
 
     @Override
     public ChallengeFlowTransactionInfo getChallengeFlowTransactionInfo(String transactionId) {
+        log.debug("Return challengeFlowTransactionInfo with transactionId={}", transactionId);
         return repository.findByTransactionId(transactionId)
                 .map(mapper::toDomain)
                 .orElseThrow(() -> new ChallengeFlowTransactionInfoNotFoundException("transactionId=" + transactionId));

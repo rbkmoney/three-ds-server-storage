@@ -21,10 +21,10 @@ public class RetryListenerConfig {
             public <T, E extends Throwable> void onError(
                     RetryContext context, RetryCallback<T, E> callback,
                     Throwable throwable) {
-                log.warn("Retrying method={}, count={} because of the exception={}",
+                log.warn("Retrying method={}, count={} because of the exception",
                         context.getAttribute("context.name"),
                         context.getRetryCount(),
-                        throwable.toString());
+                        throwable);
             }
         });
     }
