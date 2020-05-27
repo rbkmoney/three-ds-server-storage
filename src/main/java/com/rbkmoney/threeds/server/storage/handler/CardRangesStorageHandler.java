@@ -4,7 +4,7 @@ import com.rbkmoney.damsel.three_ds_server_storage.*;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 import com.rbkmoney.threeds.server.storage.mapper.CardRangeMapper;
 import com.rbkmoney.threeds.server.storage.repository.CardRangeRepository;
-import com.rbkmoney.threeds.server.storage.service.RBKMoneyPreparationFlowService;
+import com.rbkmoney.threeds.server.storage.service.PreparationFlowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
-    private final RBKMoneyPreparationFlowService preparationFlowService;
+    private final PreparationFlowService preparationFlowService;
     private final CardRangeRepository repository;
     private final CardRangeMapper mapper;
 

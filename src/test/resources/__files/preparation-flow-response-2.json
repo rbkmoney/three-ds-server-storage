@@ -1,0 +1,21 @@
+{
+  "messageType": "RBKMONEY_PREPARATION_RESPONSE",
+  "providerId": "2",
+  "serialNum": "20190411083623719000",
+  "addedCardRanges": [
+    {
+      "startRange": "6543200100000",
+      "endRange": "6543200199999"
+    },
+    {
+      "startRange": "65432102000000",
+      "endRange": "65432102999999"
+    },
+    {
+      "startRange": "7654310400000000",
+      "endRange": "7654310499999999"
+    }
+  ],
+  "modifiedCardRanges": [],
+  "deletedCardRanges": []
+}

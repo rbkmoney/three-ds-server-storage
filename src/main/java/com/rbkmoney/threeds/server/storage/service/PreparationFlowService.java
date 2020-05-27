@@ -4,30 +4,19 @@ import com.rbkmoney.threeds.server.domain.root.rbkmoney.RBKMoneyPreparationReque
 import com.rbkmoney.threeds.server.domain.root.rbkmoney.RBKMoneyPreparationResponse;
 import com.rbkmoney.threeds.server.storage.client.ThreeDsServerClient;
 import lombok.RequiredArgsConstructor;
-import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.EnableRetry;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientResponseException;
-
-import javax.transaction.Transactional;
 
 @Service
 @EnableRetry
 @RequiredArgsConstructor
-public class RBKMoneyPreparationFlowService {
+public class PreparationFlowService {
 
     private final ThreeDsServerClient client;
-    private final SerialNumUpdater serialNumUpdater;
-    private final CardRangeUpdater cardRangeUpdater;
+    private final PreparationFlowDataUpdater dataUpdater;
 
-    @Transactional
-    @Retryable(
-            value = RestClientResponseException.class,
-            backoff = @Backoff(delay = 60_000L),
-            maxAttempts = Integer.MAX_VALUE)
     public void init(String providerId) {
-        String serialNum = serialNumUpdater.getCurrent(providerId);
+        String serialNum = dataUpdater.getCurrentSerialNum(providerId);
 
         RBKMoneyPreparationRequest request = RBKMoneyPreparationRequest.builder()
                 .providerId(providerId)
@@ -36,7 +25,6 @@ public class RBKMoneyPreparationFlowService {
 
         RBKMoneyPreparationResponse response = client.preparationFlow(request);
 
-        serialNumUpdater.update(response);
-        cardRangeUpdater.update(response);
+        dataUpdater.update(response);
     }
 }
