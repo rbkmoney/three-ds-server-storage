@@ -4,17 +4,17 @@ import com.rbkmoney.threeds.server.domain.root.rbkmoney.RBKMoneyPreparationReque
 import com.rbkmoney.threeds.server.domain.root.rbkmoney.RBKMoneyPreparationResponse;
 import com.rbkmoney.threeds.server.storage.client.ThreeDsServerClient;
 import lombok.RequiredArgsConstructor;
-import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
-@EnableRetry
 @RequiredArgsConstructor
 public class PreparationFlowService {
 
     private final ThreeDsServerClient client;
     private final PreparationFlowDataUpdater dataUpdater;
 
+    @Async
     public void init(String providerId) {
         String serialNum = dataUpdater.getCurrentSerialNum(providerId);
 
