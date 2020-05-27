@@ -6,12 +6,14 @@ import com.rbkmoney.threeds.server.storage.mapper.CardRangeMapper;
 import com.rbkmoney.threeds.server.storage.repository.CardRangeRepository;
 import com.rbkmoney.threeds.server.storage.service.PreparationFlowService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
@@ -22,6 +24,7 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
     @Override
     public void initRBKMoneyPreparationFlow(InitRBKMoneyPreparationFlowRequest request) {
+        log.info("Init RBK.money preparation flow for providerId={}", request.getProviderId());
         preparationFlowService.init(request.getProviderId());
     }
 
@@ -34,6 +37,7 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
                 .map(mapper::toDomain)
                 .collect(toList());
 
+        log.info("Return {} cardRanges for providerId={}", cardRanges.size(), providerId);
         return new GetCardRangesResponse()
                 .setProviderId(providerId)
                 .setCardRanges(cardRanges);
