@@ -19,9 +19,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @ContextConfiguration(classes = ThreeDsServerStorageApplication.class, initializers = AbstractRepositoryTest.Initializer.class)
 public class AbstractRepositoryTest {
 
-    static final String TEST_PROVIDER = "TEST_PROVIDER";
-    static final String TEST_TRANSACTION = "TEST TRANSACTION";
-
     @ClassRule
     @SuppressWarnings("rawtypes")
     public static PostgreSQLContainer postgres = new PostgreSQLContainer<>("postgres:9.6")
