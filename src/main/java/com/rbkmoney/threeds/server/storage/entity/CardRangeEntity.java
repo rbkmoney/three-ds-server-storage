@@ -16,16 +16,6 @@ import java.io.Serializable;
 @Table(name = "card_range")
 public class CardRangeEntity implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @Column(name = "provider_id")
-    private String providerId;
-
-    @Column(name = "range_start")
-    private long rangeStart;
-
-    @Column(name = "range_end")
-    private long rangeEnd;
+    @EmbeddedId
+    private CardRangePk pk;
 }

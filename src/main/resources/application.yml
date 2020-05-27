@@ -21,6 +21,8 @@ spring:
     database: postgresql
     properties:
       hibernate:
+        jdbc:
+          batch_size: 1000
         default_schema: three_ds_server_storage
   datasource:
     type: com.zaxxer.hikari.HikariDataSource

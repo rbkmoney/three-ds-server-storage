@@ -2,11 +2,10 @@ CREATE SCHEMA IF NOT EXISTS three_ds_server_storage;
 
 CREATE TABLE IF NOT EXISTS three_ds_server_storage.card_range
 (
-    id          BIGSERIAL         NOT NULL,
     provider_id CHARACTER VARYING NOT NULL,
     range_start BIGINT            NOT NULL,
     range_end   BIGINT            NOT NULL,
-    CONSTRAINT card_range_pkey PRIMARY KEY (id)
+    CONSTRAINT card_range_pkey PRIMARY KEY (provider_id, range_start, range_end)
 );
 
 CREATE TABLE IF NOT EXISTS three_ds_server_storage.challenge_flow_transaction_info

@@ -3,7 +3,7 @@ package com.rbkmoney.threeds.server.storage.handler;
 import com.rbkmoney.damsel.three_ds_server_storage.*;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 import com.rbkmoney.threeds.server.storage.mapper.CardRangeMapper;
-import com.rbkmoney.threeds.server.storage.repository.CardRangesRepository;
+import com.rbkmoney.threeds.server.storage.repository.CardRangeRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
-    private final CardRangesRepository repository;
+    private final CardRangeRepository repository;
     private final CardRangeMapper mapper;
 
     @Override
@@ -27,7 +27,7 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
     @Override
     public GetCardRangesResponse getCardRanges(GetCardRangesRequest getCardRangesRequest) {
         String providerId = getCardRangesRequest.getProviderId();
-        List<CardRangeEntity> entities = repository.findByProviderId(providerId);
+        List<CardRangeEntity> entities = repository.findByPkProviderId(providerId);
 
         List<CardRange> cardRanges = entities.stream()
                 .map(mapper::toDomain)

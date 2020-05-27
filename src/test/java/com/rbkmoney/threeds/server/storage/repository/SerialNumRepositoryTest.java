@@ -32,13 +32,13 @@ public class SerialNumRepositoryTest extends AbstractRepositoryTest {
     public void shouldSaveAndGetSerialNum() {
         // Given
         SerialNumEntity entity = SerialNumEntity.builder()
-                .providerId(TEST_PROVIDER)
+                .providerId("1")
                 .serialNum("serial")
                 .build();
 
         // When
         repository.save(entity);
-        Optional<SerialNumEntity> saved = repository.findByProviderId(TEST_PROVIDER);
+        Optional<SerialNumEntity> saved = repository.findByProviderId("1");
 
         // Then
         assertTrue(saved.isPresent());
@@ -49,17 +49,17 @@ public class SerialNumRepositoryTest extends AbstractRepositoryTest {
     public void shouldKeepOnlyTheNewestSerialNum() {
         // Given
         SerialNumEntity first = SerialNumEntity.builder()
-                .providerId(TEST_PROVIDER)
+                .providerId("2")
                 .serialNum("1")
                 .build();
 
         SerialNumEntity second = SerialNumEntity.builder()
-                .providerId(TEST_PROVIDER)
+                .providerId("2")
                 .serialNum("2")
                 .build();
 
         SerialNumEntity third = SerialNumEntity.builder()
-                .providerId(TEST_PROVIDER)
+                .providerId("2")
                 .serialNum("3")
                 .build();
 
@@ -67,7 +67,7 @@ public class SerialNumRepositoryTest extends AbstractRepositoryTest {
         repository.save(first);
         repository.save(second);
         repository.save(third);
-        Optional<SerialNumEntity> saved = repository.findByProviderId(TEST_PROVIDER);
+        Optional<SerialNumEntity> saved = repository.findByProviderId("2");
 
         // Then
         assertTrue(saved.isPresent());

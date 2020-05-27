@@ -36,7 +36,7 @@ public class ChallengeFlowTransactionInfoRepositoryTest extends AbstractReposito
     public void shouldSaveAndGetChallengeFlowTransactionInfo() {
         // Given
         ChallengeFlowTransactionInfoEntity entity = ChallengeFlowTransactionInfoEntity.builder()
-                .transactionId(TEST_TRANSACTION)
+                .transactionId("1")
                 .acsDecConInd("acs")
                 .deviceChannel("device")
                 .decoupledAuthMaxTime(LocalDateTime.now())
@@ -44,7 +44,7 @@ public class ChallengeFlowTransactionInfoRepositoryTest extends AbstractReposito
 
         // When
         repository.save(entity);
-        Optional<ChallengeFlowTransactionInfoEntity> saved = repository.findByTransactionId(TEST_TRANSACTION);
+        Optional<ChallengeFlowTransactionInfoEntity> saved = repository.findByTransactionId("1");
 
         // Then
         assertTrue(saved.isPresent());
