@@ -1,6 +1,7 @@
 package com.rbkmoney.threeds.server.storage.repository;
 
 import com.rbkmoney.threeds.server.storage.ThreeDsServerStorageApplication;
+import com.rbkmoney.threeds.server.storage.config.TestConfig;
 import org.junit.ClassRule;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
@@ -16,8 +17,10 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@ContextConfiguration(classes = ThreeDsServerStorageApplication.class, initializers = AbstractRepositoryTest.Initializer.class)
-public class AbstractRepositoryTest {
+@ContextConfiguration(
+        classes = {ThreeDsServerStorageApplication.class, TestConfig.class},
+        initializers = PostgresRepositoryTest.Initializer.class)
+public class PostgresRepositoryTest {
 
     @ClassRule
     @SuppressWarnings("rawtypes")

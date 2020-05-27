@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-public class SerialNumRepositoryTest extends AbstractRepositoryTest {
+public class SerialNumRepositoryTest extends PostgresRepositoryTest {
 
     @Autowired
     private SerialNumRepository repository;
