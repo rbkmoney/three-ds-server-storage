@@ -6,10 +6,24 @@ import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 import com.rbkmoney.threeds.server.storage.entity.CardRangePk;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class CardRangeMapper {
 
-    public CardRangeEntity toEntity(CardRangeDTO dto, String providerId) {
+    public List<CardRangeEntity> toEntities(List<CardRangeDTO> dtos, String providerId) {
+        return Optional.of(dtos)
+                .orElse(emptyList())
+                .stream()
+                .map(dto -> toEntity(dto, providerId))
+                .collect(toList());
+    }
+
+    private CardRangeEntity toEntity(CardRangeDTO dto, String providerId) {
         return CardRangeEntity.builder()
                 .pk(CardRangePk.builder()
                         .providerId(providerId)
