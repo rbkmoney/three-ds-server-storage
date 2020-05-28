@@ -29,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @TestPropertySource(properties = "client.three-ds-server.url=http://127.0.0.1:8089/")
-public class PreparationFlowServiceIT extends PostgresRepositoryTest {
+public class PreparationFlowServiceTest extends PostgresRepositoryTest {
 
     @ClassRule
     public static WireMockRule wireMockRule = new WireMockRule(8089);
