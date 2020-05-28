@@ -41,6 +41,9 @@ spring:
     password: changeit
 
 client:
+  retry:
+    max-attempts: 2147483647
+    delay-ms: 60000
   three-ds-server:
     url: http://changeit:8080
     timeout: 5000

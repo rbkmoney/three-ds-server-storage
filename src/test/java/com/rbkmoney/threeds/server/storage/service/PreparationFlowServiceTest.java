@@ -28,7 +28,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@TestPropertySource(properties = "client.three-ds-server.url=http://127.0.0.1:8089/")
+@TestPropertySource(properties = {
+        "client.three-ds-server.url=http://127.0.0.1:8089/",
+        "client.retry.delay-ms=5000",
+        "client.retry.max-attempts=2"
+})
 public class PreparationFlowServiceTest extends PostgresRepositoryTest {
 
     @ClassRule
@@ -72,7 +76,7 @@ public class PreparationFlowServiceTest extends PostgresRepositoryTest {
 
         /* When:
             - first attempt will fail
-            - attempt will be retried in 1 minute */
+            - attempt will be retried in 5 seconds */
         preparationFlowService.init("2");
 
         /* Then:
