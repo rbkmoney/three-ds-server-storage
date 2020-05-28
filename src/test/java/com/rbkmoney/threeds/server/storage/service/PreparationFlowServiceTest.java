@@ -65,13 +65,18 @@ public class PreparationFlowServiceTest extends PostgresRepositoryTest {
 
     @Test
     public void shouldRetryOnException() throws IOException {
-        // Given
+        /* Given:
+            - first stub will answer with 500 status code
+            - second stub will return correct data */
         stubWithErrorAndThenOkResponse();
 
-        // When
+        /* When:
+            - first attempt will fail
+            - attempt will be retried in 1 minute */
         preparationFlowService.init("2");
 
-        // Then
+        /* Then:
+            - expect correct data to be saved */
         Optional<SerialNumEntity> serialNum = serialNumRepository.findByProviderId("2");
         assertTrue(serialNum.isPresent());
         assertThat(serialNum.get().getSerialNum()).isEqualTo("20190411083623719000");
@@ -95,11 +100,11 @@ public class PreparationFlowServiceTest extends PostgresRepositoryTest {
                 .whenScenarioStateIs(STARTED)
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value()))
-                .willSetStateTo("OK"));
+                .willSetStateTo("SECOND_ATTEMPT"));
 
         stubFor(post(urlEqualTo("/"))
                 .inScenario("preparation")
-                .whenScenarioStateIs("OK")
+                .whenScenarioStateIs("SECOND_ATTEMPT")
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)

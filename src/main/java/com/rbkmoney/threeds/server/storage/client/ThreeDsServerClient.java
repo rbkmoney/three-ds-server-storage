@@ -28,11 +28,10 @@ public class ThreeDsServerClient {
     public RBKMoneyPreparationResponse preparationFlow(RBKMoneyPreparationRequest request) {
         log.info("Request: {}", request);
 
-        RBKMoneyPreparationResponse response = restTemplate.postForEntity(
+        RBKMoneyPreparationResponse response = restTemplate.postForObject(
                 url,
                 request,
-                RBKMoneyPreparationResponse.class)
-                .getBody();
+                RBKMoneyPreparationResponse.class);
 
         log.info("Response: {}", response);
         return response;
