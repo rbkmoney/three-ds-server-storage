@@ -23,8 +23,8 @@ public class ThreeDsServerClient {
 
     @Retryable(
             value = RestClientResponseException.class,
-            backoff = @Backoff(delay = 60_000L),
-            maxAttempts = Integer.MAX_VALUE)
+            backoff = @Backoff(delayExpression = "#{${client.retry.delay-ms}}"),
+            maxAttemptsExpression = "#{${client.retry.max-attempts}}")
     public RBKMoneyPreparationResponse preparationFlow(RBKMoneyPreparationRequest request) {
         log.info("Request: {}", request);
 
