@@ -92,7 +92,7 @@ public class HandlerTest {
                 .build(ChallengeFlowTransactionInfoStorageSrv.Iface.class);
     }
 
-    @Test(expected = GetCardRangesNotFound.class)
+    @Test(expected = CardRangesNotFound.class)
     public void shouldThrowWhenEmptyCardRangesTest() throws Exception {
         String providerId = "visa";
 
@@ -101,7 +101,7 @@ public class HandlerTest {
         cardRangesStorageClient.getCardRanges(new GetCardRangesRequest(providerId));
     }
 
-    @Test(expected = GetCardRangesNotFound.class)
+    @Test(expected = CardRangesNotFound.class)
     public void shouldThrowWhenNullLastUpdatedTest() throws Exception {
         String providerId = "visa";
 

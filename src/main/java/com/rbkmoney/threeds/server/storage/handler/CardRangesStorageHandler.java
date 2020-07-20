@@ -34,7 +34,7 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
     }
 
     @Override
-    public GetCardRangesResponse getCardRanges(GetCardRangesRequest request) throws GetCardRangesNotFound, TException {
+    public GetCardRangesResponse getCardRanges(GetCardRangesRequest request) throws CardRangesNotFound, TException {
         String providerId = request.getProviderId();
 
         List<CardRange> cardRanges = getCardRanges(providerId);
@@ -49,11 +49,11 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
                 .setLastUpdatedAt(lastUpdatedAt);
     }
 
-    private List<CardRange> getCardRanges(String providerId) throws GetCardRangesNotFound {
+    private List<CardRange> getCardRanges(String providerId) throws CardRangesNotFound {
         List<CardRangeEntity> entities = cardRangeRepository.findByPkProviderId(providerId);
 
         if (entities.isEmpty()) {
-            throw new GetCardRangesNotFound("No value \"cardRanges\" present, providerId=" + providerId);
+            throw new CardRangesNotFound("No cardRanges found for providerId=" + providerId);
         }
 
         return entities.stream()
@@ -61,13 +61,9 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
                 .collect(toList());
     }
 
-    private String getLastUpdatedAt(String providerId) throws GetCardRangesNotFound {
+    private String getLastUpdatedAt(String providerId) throws CardRangesNotFound {
         LastUpdatedEntity lastUpdatedEntity = lastUpdatedRepository.findByProviderId(providerId)
-                .orElse(null);
-
-        if (lastUpdatedEntity == null) {
-            throw new GetCardRangesNotFound("No value \"lastUpdatedAt\" present, providerId=" + providerId);
-        }
+                .orElseThrow(() -> new CardRangesNotFound("lastUpdatedAt is not set for providerId=" + providerId));
 
         return TypeUtil.temporalToString(lastUpdatedEntity.getLastUpdatedAt());
     }
