@@ -19,7 +19,8 @@ public class RetryListenerConfig {
         return List.of(new RetryListenerSupport() {
             @Override
             public <T, E extends Throwable> void onError(
-                    RetryContext context, RetryCallback<T, E> callback,
+                    RetryContext context,
+                    RetryCallback<T, E> callback,
                     Throwable throwable) {
                 log.warn("Retrying method={}, count={} because of the exception",
                         context.getAttribute("context.name"),

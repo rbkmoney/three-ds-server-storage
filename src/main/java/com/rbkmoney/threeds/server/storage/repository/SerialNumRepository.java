@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface SerialNumRepository extends JpaRepository<SerialNumEntity, String> {
 
     Optional<SerialNumEntity> findByProviderId(String providerId);
+
 }

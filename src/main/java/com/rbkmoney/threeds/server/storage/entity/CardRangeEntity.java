@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 @Entity
@@ -18,4 +20,5 @@ public class CardRangeEntity implements Serializable {
 
     @EmbeddedId
     private CardRangePk pk;
+
 }

@@ -9,17 +9,20 @@ import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.time.Duration;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-@ContextConfiguration(
+@SpringBootTest(
         classes = {ThreeDsServerStorageApplication.class, TestConfig.class},
-        initializers = PostgresRepositoryTest.Initializer.class)
+        webEnvironment = RANDOM_PORT,
+        properties = {"spring.main.allow-bean-definition-overriding=true"})
+@TestPropertySource("classpath:application.yml")
+@ContextConfiguration(initializers = PostgresRepositoryTest.Initializer.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class PostgresRepositoryTest {
 
     @ClassRule

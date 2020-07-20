@@ -11,4 +11,5 @@ import java.util.List;
 public interface CardRangeRepository extends JpaRepository<CardRangeEntity, CardRangePk> {
 
     List<CardRangeEntity> findByPkProviderId(String providerId);
+
 }
