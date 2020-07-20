@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface ChallengeFlowTransactionInfoRepository extends JpaRepository<ChallengeFlowTransactionInfoEntity, String> {
 
     Optional<ChallengeFlowTransactionInfoEntity> findByTransactionId(String transactionId);
+
 }

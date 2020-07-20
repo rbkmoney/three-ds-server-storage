@@ -6,23 +6,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
-@Embeddable
+@Entity
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardRangePk implements Serializable {
+@Table(name = "last_updated")
+public class LastUpdatedEntity implements Serializable {
 
+    @Id
     @Column(name = "provider_id")
     private String providerId;
 
-    @Column(name = "range_start")
-    private long rangeStart;
-
-    @Column(name = "range_end")
-    private long rangeEnd;
+    @Column(name = "last_updated_at")
+    private LocalDateTime lastUpdatedAt;
 
 }

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Service
 public class ChallengeFlowTransactionInfoMapper {
 
-    public ChallengeFlowTransactionInfoEntity toEntity(ChallengeFlowTransactionInfo domain) {
+    public ChallengeFlowTransactionInfoEntity fromThriftToEntity(ChallengeFlowTransactionInfo domain) {
         return ChallengeFlowTransactionInfoEntity.builder()
                 .transactionId(domain.getTransactionId())
                 .acsDecConInd(domain.getAcsDecConInd())
@@ -18,7 +18,7 @@ public class ChallengeFlowTransactionInfoMapper {
                 .build();
     }
 
-    public ChallengeFlowTransactionInfo toDomain(ChallengeFlowTransactionInfoEntity entity) {
+    public ChallengeFlowTransactionInfo fromEntityToThrift(ChallengeFlowTransactionInfoEntity entity) {
         return new ChallengeFlowTransactionInfo()
                 .setTransactionId(entity.getTransactionId())
                 .setAcsDecConInd(entity.getAcsDecConInd())

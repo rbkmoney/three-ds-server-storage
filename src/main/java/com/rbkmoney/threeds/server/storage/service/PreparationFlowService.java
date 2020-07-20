@@ -18,13 +18,17 @@ public class PreparationFlowService {
     public void init(String providerId) {
         String serialNum = dataUpdater.getCurrentSerialNum(providerId);
 
+        RBKMoneyPreparationResponse response = preparationFlow(providerId, serialNum);
+
+        dataUpdater.update(response);
+    }
+
+    private RBKMoneyPreparationResponse preparationFlow(String providerId, String serialNum) {
         RBKMoneyPreparationRequest request = RBKMoneyPreparationRequest.builder()
                 .providerId(providerId)
                 .serialNum(serialNum)
                 .build();
 
-        RBKMoneyPreparationResponse response = client.preparationFlow(request);
-
-        dataUpdater.update(response);
+        return client.preparationFlow(request);
     }
 }

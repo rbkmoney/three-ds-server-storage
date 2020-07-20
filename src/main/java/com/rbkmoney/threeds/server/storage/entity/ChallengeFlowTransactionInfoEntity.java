@@ -32,4 +32,5 @@ public class ChallengeFlowTransactionInfoEntity implements Serializable {
 
     @Column(name = "acs_dec_con_ind")
     private String acsDecConInd;
+
 }

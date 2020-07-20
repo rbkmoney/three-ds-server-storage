@@ -25,8 +25,8 @@
         <dockerfile.registry>${env.REGISTRY}</dockerfile.registry>
         <shared.resources.version>0.3.6</shared.resources.version>
         <sonar.jacoco.reportPaths>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPaths>
-        <three-ds-server-storage-proto.version>1.10-8ee9d23</three-ds-server-storage-proto.version>
-        <three-ds-server-domain-lib.version>1.0.3</three-ds-server-domain-lib.version>
+        <three-ds-server-storage-proto.version>1.11-e5a4ddf</three-ds-server-storage-proto.version>
+        <three-ds-server-domain-lib.version>1.0.7</three-ds-server-domain-lib.version>
     </properties>
 
     <dependencies>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>custom-actuator-endpoints</artifactId>
-            <version>0.0.2</version>
+            <version>0.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney.woody</groupId>
@@ -60,6 +60,12 @@
             <groupId>com.rbkmoney</groupId>
             <artifactId>three-ds-server-domain-lib</artifactId>
             <version>${three-ds-server-domain-lib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.rbkmoney.geck</groupId>
+            <artifactId>common</artifactId>
+            <version>0.6.9</version>
+            <scope>provided</scope>
         </dependency>
 
         <!--spring-->

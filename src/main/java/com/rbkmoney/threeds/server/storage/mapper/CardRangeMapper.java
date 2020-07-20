@@ -1,7 +1,6 @@
 package com.rbkmoney.threeds.server.storage.mapper;
 
-import com.rbkmoney.damsel.three_ds_server_storage.CardRange;
-import com.rbkmoney.threeds.server.dto.CardRangeDTO;
+import com.rbkmoney.threeds.server.domain.rbkmoney.cardrange.CardRange;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 import com.rbkmoney.threeds.server.storage.entity.CardRangePk;
 import org.springframework.stereotype.Service;
@@ -15,26 +14,26 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class CardRangeMapper {
 
-    public List<CardRangeEntity> toEntities(List<CardRangeDTO> dtos, String providerId) {
-        return Optional.of(dtos)
+    public List<CardRangeEntity> fromJsonToEntity(List<CardRange> cardRanges, String providerId) {
+        return Optional.of(cardRanges)
                 .orElse(emptyList())
                 .stream()
-                .map(dto -> toEntity(dto, providerId))
+                .map(dto -> fromJsonToEntity(dto, providerId))
                 .collect(toList());
     }
 
-    private CardRangeEntity toEntity(CardRangeDTO dto, String providerId) {
+    private CardRangeEntity fromJsonToEntity(CardRange cardRange, String providerId) {
         return CardRangeEntity.builder()
                 .pk(CardRangePk.builder()
                         .providerId(providerId)
-                        .rangeStart(Long.parseLong(dto.getStartRange()))
-                        .rangeEnd(Long.parseLong(dto.getEndRange()))
+                        .rangeStart(Long.parseLong(cardRange.getStartRange()))
+                        .rangeEnd(Long.parseLong(cardRange.getEndRange()))
                         .build())
                 .build();
     }
 
-    public CardRange toDomain(CardRangeEntity entity) {
-        return new CardRange()
+    public com.rbkmoney.damsel.three_ds_server_storage.CardRange fromEntityToThrift(CardRangeEntity entity) {
+        return new com.rbkmoney.damsel.three_ds_server_storage.CardRange()
                 .setRangeStart(entity.getPk().getRangeStart())
                 .setRangeEnd(entity.getPk().getRangeEnd());
     }
