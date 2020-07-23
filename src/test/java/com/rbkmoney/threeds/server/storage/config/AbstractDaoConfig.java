@@ -22,7 +22,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @TestPropertySource("classpath:application.yml")
 @ContextConfiguration(initializers = AbstractDaoConfig.Initializer.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public abstract class AbstractDaoConfig {
+public class AbstractDaoConfig {
 
     @ClassRule
     @SuppressWarnings("rawtypes")
