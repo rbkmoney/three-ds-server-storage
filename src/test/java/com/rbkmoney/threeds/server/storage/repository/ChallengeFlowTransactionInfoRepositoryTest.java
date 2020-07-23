@@ -1,6 +1,5 @@
 package com.rbkmoney.threeds.server.storage.repository;
 
-import com.rbkmoney.threeds.server.storage.config.AbstractDaoConfig;
 import com.rbkmoney.threeds.server.storage.entity.ChallengeFlowTransactionInfoEntity;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 
 @RunWith(SpringRunner.class)
-public class ChallengeFlowTransactionInfoRepositoryTest extends AbstractDaoConfig {
+public class ChallengeFlowTransactionInfoRepositoryTest extends PostgresRepositoryTest {
 
     @Autowired
     private ChallengeFlowTransactionInfoRepository repository;

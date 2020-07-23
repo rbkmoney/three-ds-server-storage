@@ -1,6 +1,5 @@
 package com.rbkmoney.threeds.server.storage.repository;
 
-import com.rbkmoney.threeds.server.storage.config.AbstractDaoConfig;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 import com.rbkmoney.threeds.server.storage.entity.CardRangePk;
 import org.junit.Before;
@@ -15,7 +14,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-public class CardRangesRepositoryTest extends AbstractDaoConfig {
+public class CardRangesRepositoryTest extends PostgresRepositoryTest {
 
     @Autowired
     private CardRangeRepository repository;

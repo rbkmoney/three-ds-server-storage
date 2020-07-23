@@ -1,6 +1,5 @@
 package com.rbkmoney.threeds.server.storage.repository;
 
-import com.rbkmoney.threeds.server.storage.config.AbstractDaoConfig;
 import com.rbkmoney.threeds.server.storage.entity.LastUpdatedEntity;
 import com.rbkmoney.threeds.server.storage.mapper.LastUpdatedMapper;
 import org.junit.Before;
@@ -17,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-public class LastUpdatedRepositoryTest extends AbstractDaoConfig {
+public class LastUpdatedRepositoryTest extends PostgresRepositoryTest {
 
     @Autowired
     private LastUpdatedRepository repository;
