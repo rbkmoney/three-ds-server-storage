@@ -2,10 +2,10 @@ package com.rbkmoney.threeds.server.storage.service;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.base.Charsets;
+import com.rbkmoney.threeds.server.storage.config.AbstractDaoConfig;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 import com.rbkmoney.threeds.server.storage.entity.SerialNumEntity;
 import com.rbkmoney.threeds.server.storage.repository.CardRangeRepository;
-import com.rbkmoney.threeds.server.storage.repository.PostgresRepositoryTest;
 import com.rbkmoney.threeds.server.storage.repository.SerialNumRepository;
 import io.micrometer.core.instrument.util.IOUtils;
 import org.junit.ClassRule;
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertTrue;
         "client.retry.delay-ms=5000",
         "client.retry.max-attempts=2"
 })
-public class PreparationFlowServiceTest extends PostgresRepositoryTest {
+public class PreparationFlowServiceTest extends AbstractDaoConfig {
 
     @ClassRule
     public static WireMockRule wireMockRule = new WireMockRule(8089);

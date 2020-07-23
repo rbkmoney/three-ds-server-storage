@@ -4,8 +4,6 @@ import com.rbkmoney.threeds.server.domain.root.Message;
 import com.rbkmoney.threeds.server.domain.root.rbkmoney.RBKMoneyPreparationRequest;
 import com.rbkmoney.threeds.server.domain.root.rbkmoney.RBKMoneyPreparationResponse;
 import com.rbkmoney.threeds.server.storage.exception.MessageTypeException;
-import com.rbkmoney.threeds.server.storage.exception.RestClientThreeDsServerRequestException;
-import com.rbkmoney.threeds.server.storage.exception.ThreeDsServerInternalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,25 +25,16 @@ public class ThreeDsServerClient {
     private String url;
 
     @Retryable(
-            value = RestClientResponseException.class,
+            value = {
+                    RestClientResponseException.class,
+                    MessageTypeException.class
+            },
             backoff = @Backoff(delayExpression = "#{${client.retry.delay-ms}}"),
             maxAttemptsExpression = "#{${client.retry.max-attempts}}")
     public RBKMoneyPreparationResponse preparationFlow(RBKMoneyPreparationRequest request) {
         log.info("Request: {}", request);
 
         ResponseEntity<Message> response = restTemplate.postForEntity(url, request, Message.class);
-
-        if (response.getStatusCode().is4xxClientError()) {
-            throw new RestClientThreeDsServerRequestException(
-                    String.format("request=%s, code=%s", request, response.getStatusCode().toString())
-            );
-        }
-
-        if (response.getStatusCode().is5xxServerError()) {
-            throw new ThreeDsServerInternalException(
-                    String.format("request=%s, code=%s", request, response.getStatusCode().toString())
-            );
-        }
 
         if (response.getBody() instanceof RBKMoneyPreparationResponse) {
             log.info("Response: {}", response.getBody());
