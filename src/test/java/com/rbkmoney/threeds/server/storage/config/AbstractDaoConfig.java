@@ -1,7 +1,6 @@
-package com.rbkmoney.threeds.server.storage.repository;
+package com.rbkmoney.threeds.server.storage.config;
 
 import com.rbkmoney.threeds.server.storage.ThreeDsServerStorageApplication;
-import com.rbkmoney.threeds.server.storage.config.TestConfig;
 import org.junit.ClassRule;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
@@ -21,9 +20,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
         webEnvironment = RANDOM_PORT,
         properties = {"spring.main.allow-bean-definition-overriding=true"})
 @TestPropertySource("classpath:application.yml")
-@ContextConfiguration(initializers = PostgresRepositoryTest.Initializer.class)
+@ContextConfiguration(initializers = AbstractDaoConfig.Initializer.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class PostgresRepositoryTest {
+public abstract class AbstractDaoConfig {
 
     @ClassRule
     @SuppressWarnings("rawtypes")

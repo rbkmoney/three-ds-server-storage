@@ -34,18 +34,18 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/three_ds_server_storage
-    username: changeit
-    password: changeit
+    username: postgres
+    password: postgres
   flyway:
     schemas: three_ds_server_storage
     url: jdbc:postgresql://localhost:5432/three_ds_server_storage
-    user: changeit
-    password: changeit
+    user: postgres
+    password: postgres
 
 client:
   retry:
     max-attempts: 2147483647
     delay-ms: 60000
   three-ds-server:
-    url: http://changeit:8080
+    url: http://localhost:8080/sdk
     timeout: 5000

@@ -1,5 +1,6 @@
 package com.rbkmoney.threeds.server.storage.repository;
 
+import com.rbkmoney.threeds.server.storage.config.AbstractDaoConfig;
 import com.rbkmoney.threeds.server.storage.entity.SerialNumEntity;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-public class SerialNumRepositoryTest extends PostgresRepositoryTest {
+public class SerialNumRepositoryTest extends AbstractDaoConfig {
 
     @Autowired
     private SerialNumRepository repository;

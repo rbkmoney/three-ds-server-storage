@@ -16,7 +16,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.context.annotation.RequestScope;
 
 import javax.net.ssl.SSLContext;
 import java.security.KeyManagementException;
@@ -58,7 +57,6 @@ public class RestTemplateConfig {
     }
 
     @Bean
-    @RequestScope
     public RestTemplate restTemplate(
             RestTemplateBuilder restTemplateBuilder,
             @Value("${client.three-ds-server.timeout}") int networkTimeout) {
