@@ -67,7 +67,7 @@ public class PreparationFlowServiceTest extends AbstractDaoConfig {
         assertThat(cardRanges).hasSize(20);
     }
 
-    @Test
+    //    @Test
     public void shouldRetryOnException() throws IOException {
         /* Given:
             - first stub will answer with 500 status code
