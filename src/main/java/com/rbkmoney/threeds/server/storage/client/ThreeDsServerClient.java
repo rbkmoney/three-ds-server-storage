@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -24,13 +21,13 @@ public class ThreeDsServerClient {
     @Value("${client.three-ds-server.url}")
     private String url;
 
-    @Retryable(
-            value = {
-                    RestClientResponseException.class,
-                    MessageTypeException.class
-            },
-            backoff = @Backoff(delayExpression = "#{${client.retry.delay-ms}}"),
-            maxAttemptsExpression = "#{${client.retry.max-attempts}}")
+    //    @Retryable(
+//            value = {
+//                    RestClientResponseException.class,
+//                    MessageTypeException.class
+//            },
+//            backoff = @Backoff(delayExpression = "#{${client.retry.delay-ms}}"),
+//            maxAttemptsExpression = "#{${client.retry.max-attempts}}")
     public RBKMoneyPreparationResponse preparationFlow(RBKMoneyPreparationRequest request) {
         log.info("Request: {}", request);
 
