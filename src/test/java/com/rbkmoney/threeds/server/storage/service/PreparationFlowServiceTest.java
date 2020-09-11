@@ -56,7 +56,7 @@ public class PreparationFlowServiceTest extends AbstractDaoConfig {
         stubForOkResponse();
 
         // When
-        preparationFlowService.init("1");
+        preparationFlowService.init("1", "2.1.0");
 
         // Then
         Optional<SerialNumEntity> serialNum = serialNumRepository.findByProviderId("1");
@@ -77,7 +77,7 @@ public class PreparationFlowServiceTest extends AbstractDaoConfig {
         /* When:
             - first attempt will fail
             - attempt will be retried in 5 seconds */
-        preparationFlowService.init("2");
+        preparationFlowService.init("2", "2.1.0");
 
         /* Then:
             - expect correct data to be saved */

@@ -30,7 +30,7 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
     @Override
     public void initRBKMoneyPreparationFlow(InitRBKMoneyPreparationFlowRequest request) {
         log.info("Init RBK.money preparation flow for providerId={}", request.getProviderId());
-        preparationFlowService.init(request.getProviderId());
+        preparationFlowService.init(request.getProviderId(), request.getMessageVersion());
     }
 
     @Override
@@ -45,8 +45,8 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
         return new GetCardRangesResponse()
                 .setProviderId(providerId)
-                .setCardRanges(cardRanges)
-                .setLastUpdatedAt(lastUpdatedAt);
+                .setLastUpdatedAt(lastUpdatedAt)
+                .setCardRanges(cardRanges);
     }
 
     private List<CardRange> getCardRanges(String providerId) throws CardRangesNotFound {
