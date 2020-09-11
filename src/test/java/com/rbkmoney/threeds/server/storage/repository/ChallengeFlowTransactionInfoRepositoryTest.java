@@ -25,9 +25,12 @@ public class ChallengeFlowTransactionInfoRepositoryTest extends AbstractDaoConfi
     public void setUp() {
         ChallengeFlowTransactionInfoEntity trap = ChallengeFlowTransactionInfoEntity.builder()
                 .transactionId("TRAP")
-                .acsDecConInd("dec")
                 .deviceChannel("channel")
                 .decoupledAuthMaxTime(LocalDateTime.now())
+                .acsDecConInd("dec")
+                .providerId("1")
+                .messageVersion("2.1.0")
+                .acsUrl("1")
                 .build();
 
         repository.save(trap);
@@ -38,9 +41,12 @@ public class ChallengeFlowTransactionInfoRepositoryTest extends AbstractDaoConfi
         // Given
         ChallengeFlowTransactionInfoEntity entity = ChallengeFlowTransactionInfoEntity.builder()
                 .transactionId("1")
-                .acsDecConInd("acs")
                 .deviceChannel("device")
                 .decoupledAuthMaxTime(LocalDateTime.now())
+                .acsDecConInd("acs")
+                .providerId("1")
+                .messageVersion("2.1.0")
+                .acsUrl("1")
                 .build();
 
         // When

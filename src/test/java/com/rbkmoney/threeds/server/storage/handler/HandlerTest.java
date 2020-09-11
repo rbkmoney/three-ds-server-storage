@@ -118,9 +118,12 @@ public class HandlerTest extends AbstractConfigWithoutDao {
 
         ChallengeFlowTransactionInfoEntity challengeFlowTransactionInfoEntity = ChallengeFlowTransactionInfoEntity.builder()
                 .transactionId(transactionId)
-                .acsDecConInd("acs")
                 .deviceChannel("device")
                 .decoupledAuthMaxTime(LocalDateTime.now())
+                .acsDecConInd("acs")
+                .providerId("1")
+                .messageVersion("2.1.0")
+                .acsUrl("1")
                 .build();
 
         when(challengeFlowTransactionInfoRepository.findByTransactionId(transactionId)).thenReturn(Optional.of(challengeFlowTransactionInfoEntity));

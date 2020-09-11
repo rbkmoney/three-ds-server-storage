@@ -12,17 +12,23 @@ public class ChallengeFlowTransactionInfoMapper {
     public ChallengeFlowTransactionInfoEntity fromThriftToEntity(ChallengeFlowTransactionInfo domain) {
         return ChallengeFlowTransactionInfoEntity.builder()
                 .transactionId(domain.getTransactionId())
-                .acsDecConInd(domain.getAcsDecConInd())
                 .deviceChannel(domain.getDeviceChannel())
                 .decoupledAuthMaxTime(LocalDateTime.parse(domain.getDecoupledAuthMaxTime()))
+                .acsDecConInd(domain.getAcsDecConInd())
+                .providerId(domain.getProviderId())
+                .messageVersion(domain.getMessageVersion())
+                .acsUrl(domain.getAcsUrl())
                 .build();
     }
 
     public ChallengeFlowTransactionInfo fromEntityToThrift(ChallengeFlowTransactionInfoEntity entity) {
         return new ChallengeFlowTransactionInfo()
                 .setTransactionId(entity.getTransactionId())
-                .setAcsDecConInd(entity.getAcsDecConInd())
                 .setDeviceChannel(entity.getDeviceChannel())
-                .setDecoupledAuthMaxTime(entity.getDecoupledAuthMaxTime().toString());
+                .setDecoupledAuthMaxTime(entity.getDecoupledAuthMaxTime().toString())
+                .setAcsDecConInd(entity.getAcsDecConInd())
+                .setProviderId(entity.getProviderId())
+                .setMessageVersion(entity.getMessageVersion())
+                .setAcsUrl(entity.getAcsUrl());
     }
 }

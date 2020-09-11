@@ -33,4 +33,13 @@ public class ChallengeFlowTransactionInfoEntity implements Serializable {
     @Column(name = "acs_dec_con_ind")
     private String acsDecConInd;
 
+    @Column(name = "provider_id")
+    private String providerId;
+
+    @Column(name = "message_version")
+    private String messageVersion;
+
+    @Column(name = "acs_url")
+    private String acsUrl;
+
 }

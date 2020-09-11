@@ -15,19 +15,20 @@ public class PreparationFlowService {
     private final PreparationFlowDataUpdater dataUpdater;
 
     @Async
-    public void init(String providerId) {
+    public void init(String providerId, String messageVersion) {
         String serialNum = dataUpdater.getCurrentSerialNum(providerId);
 
-        RBKMoneyPreparationResponse response = preparationFlow(providerId, serialNum);
+        RBKMoneyPreparationResponse response = preparationFlow(providerId, serialNum, messageVersion);
 
         dataUpdater.update(response);
     }
 
-    private RBKMoneyPreparationResponse preparationFlow(String providerId, String serialNum) {
+    private RBKMoneyPreparationResponse preparationFlow(String providerId, String serialNum, String messageVersion) {
         RBKMoneyPreparationRequest request = RBKMoneyPreparationRequest.builder()
                 .providerId(providerId)
                 .serialNum(serialNum)
                 .build();
+        request.setMessageVersion(messageVersion);
 
         return client.preparationFlow(request);
     }
