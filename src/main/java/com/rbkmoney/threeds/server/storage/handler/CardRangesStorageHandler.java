@@ -10,7 +10,6 @@ import com.rbkmoney.threeds.server.storage.repository.LastUpdatedRepository;
 import com.rbkmoney.threeds.server.storage.service.PreparationFlowService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
     }
 
     @Override
-    public GetCardRangesResponse getCardRanges(GetCardRangesRequest request) throws CardRangesNotFound, TException {
+    public GetCardRangesResponse getCardRanges(GetCardRangesRequest request) throws CardRangesNotFound {
         String providerId = request.getProviderId();
 
         List<CardRange> cardRanges = getCardRanges(providerId);

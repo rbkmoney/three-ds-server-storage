@@ -1,11 +1,8 @@
 package com.rbkmoney.threeds.server.storage.handler;
 
-import com.rbkmoney.damsel.schedule.ContextValidationResponse;
-import com.rbkmoney.damsel.schedule.ExecuteJobRequest;
-import com.rbkmoney.damsel.schedule.ScheduledJobExecutorSrv;
+import com.rbkmoney.damsel.schedule.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;
@@ -16,12 +13,18 @@ import java.nio.ByteBuffer;
 public class ScheduledPreparationFlowServiceHandler implements ScheduledJobExecutorSrv.Iface {
 
     @Override
-    public ContextValidationResponse validateExecutionContext(ByteBuffer byteBuffer) throws TException {
-        return null; // TODO [a.romanov]: impl
+    public ContextValidationResponse validateExecutionContext(ByteBuffer byteBuffer) {
+        return new ContextValidationResponse()
+                .setResponseStatus(ValidationResponseStatus.success(
+                        new ValidationSuccess()));
     }
 
     @Override
-    public ByteBuffer executeJob(ExecuteJobRequest executeJobRequest) throws TException {
-        return null; // TODO [a.romanov]: impl
+    public ByteBuffer executeJob(ExecuteJobRequest executeJobRequest) {
+        // TODO [a.romanov]:
+        //  - deserialize request context
+        //  - call PreparationFlowServiceHandler
+
+        return ByteBuffer.wrap(new byte[0]);
     }
 }
