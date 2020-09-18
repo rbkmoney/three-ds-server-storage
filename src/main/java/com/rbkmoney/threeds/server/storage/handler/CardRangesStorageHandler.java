@@ -26,6 +26,7 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
     private final CardRangeMapper cardRangeMapper;
     private final LastUpdatedRepository lastUpdatedRepository;
 
+    // TODO [a.romanov]: remove
     @Override
     public void initRBKMoneyPreparationFlow(InitRBKMoneyPreparationFlowRequest request) {
         log.info("Init RBK.money preparation flow for providerId={}", request.getProviderId());
