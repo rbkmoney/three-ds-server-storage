@@ -7,7 +7,7 @@ import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
 
 @Slf4j
-public abstract class ThriftDeserializer<T extends TBase> {
+public class ThriftDeserializer<T extends TBase> {
 
     public T deserialize(byte[] bin, T thrift) {
         try {

@@ -7,7 +7,6 @@ import com.rbkmoney.threeds.server.storage.entity.LastUpdatedEntity;
 import com.rbkmoney.threeds.server.storage.mapper.CardRangeMapper;
 import com.rbkmoney.threeds.server.storage.repository.CardRangeRepository;
 import com.rbkmoney.threeds.server.storage.repository.LastUpdatedRepository;
-import com.rbkmoney.threeds.server.storage.service.PreparationFlowService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,17 +20,9 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
-    private final PreparationFlowService preparationFlowService;
     private final CardRangeRepository cardRangeRepository;
     private final CardRangeMapper cardRangeMapper;
     private final LastUpdatedRepository lastUpdatedRepository;
-
-    // TODO [a.romanov]: remove
-    @Override
-    public void initRBKMoneyPreparationFlow(InitRBKMoneyPreparationFlowRequest request) {
-        log.info("Init RBK.money preparation flow for providerId={}", request.getProviderId());
-        preparationFlowService.init(request.getProviderId(), request.getMessageVersion());
-    }
 
     @Override
     public GetCardRangesResponse getCardRanges(GetCardRangesRequest request) throws CardRangesNotFound {
