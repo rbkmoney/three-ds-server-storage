@@ -2,9 +2,11 @@ package com.rbkmoney.threeds.server.storage.handler;
 
 import com.rbkmoney.damsel.schedule.*;
 import com.rbkmoney.damsel.three_ds_server_storage.InitRBKMoneyPreparationFlowRequest;
+import com.rbkmoney.damsel.three_ds_server_storage.PreparationFlowServiceSrv;
 import com.rbkmoney.threeds.server.storage.deserializer.ThriftDeserializer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;
@@ -13,6 +15,8 @@ import java.nio.ByteBuffer;
 @Service
 @RequiredArgsConstructor
 public class ScheduledPreparationFlowServiceHandler implements ScheduledJobExecutorSrv.Iface {
+
+    private static final ByteBuffer OK = ByteBuffer.wrap(new byte[0]);
 
     private final ThriftDeserializer<InitRBKMoneyPreparationFlowRequest> preparationFlowRequestDeserializer;
     private final PreparationFlowServiceSrv.Iface preparationFlowServiceHandler;
@@ -25,7 +29,7 @@ public class ScheduledPreparationFlowServiceHandler implements ScheduledJobExecu
     }
 
     @Override
-    public ByteBuffer executeJob(ExecuteJobRequest executeJobRequest) {
+    public ByteBuffer executeJob(ExecuteJobRequest executeJobRequest) throws TException {
         InitRBKMoneyPreparationFlowRequest request = preparationFlowRequestDeserializer.deserialize(
                 executeJobRequest.getServiceExecutionContext(),
                 new InitRBKMoneyPreparationFlowRequest());
@@ -33,6 +37,6 @@ public class ScheduledPreparationFlowServiceHandler implements ScheduledJobExecu
         log.info("Execute scheduled job for providerId={}", request.getProviderId());
         preparationFlowServiceHandler.initRBKMoneyPreparationFlow(request);
 
-        return ByteBuffer.wrap(new byte[0]);
+        return OK;
     }
 }

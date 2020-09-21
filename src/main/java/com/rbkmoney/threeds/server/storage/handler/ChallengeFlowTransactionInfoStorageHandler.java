@@ -8,7 +8,6 @@ import com.rbkmoney.threeds.server.storage.mapper.ChallengeFlowTransactionInfoMa
 import com.rbkmoney.threeds.server.storage.repository.ChallengeFlowTransactionInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -29,7 +28,7 @@ public class ChallengeFlowTransactionInfoStorageHandler implements ChallengeFlow
     }
 
     @Override
-    public ChallengeFlowTransactionInfo getChallengeFlowTransactionInfo(String transactionId) throws ChallengeFlowTransactionInfoNotFound, TException {
+    public ChallengeFlowTransactionInfo getChallengeFlowTransactionInfo(String transactionId) throws ChallengeFlowTransactionInfoNotFound {
         log.debug("Return challengeFlowTransactionInfo with transactionId={}", transactionId);
 
         return repository.findByTransactionId(transactionId)
