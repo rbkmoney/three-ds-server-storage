@@ -16,8 +16,6 @@ import java.nio.ByteBuffer;
 @RequiredArgsConstructor
 public class ScheduledPreparationFlowServiceHandler implements ScheduledJobExecutorSrv.Iface {
 
-    private static final ByteBuffer OK = ByteBuffer.wrap(new byte[0]);
-
     private final ThriftDeserializer<InitRBKMoneyPreparationFlowRequest> preparationFlowRequestDeserializer;
     private final PreparationFlowServiceSrv.Iface preparationFlowServiceHandler;
 
@@ -37,6 +35,6 @@ public class ScheduledPreparationFlowServiceHandler implements ScheduledJobExecu
         log.info("Execute scheduled job for providerId={}", request.getProviderId());
         preparationFlowServiceHandler.initRBKMoneyPreparationFlow(request);
 
-        return OK;
+        return ByteBuffer.wrap(executeJobRequest.getServiceExecutionContext());
     }
 }
