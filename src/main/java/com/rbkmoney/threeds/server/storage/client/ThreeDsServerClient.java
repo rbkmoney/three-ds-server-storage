@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -21,13 +23,6 @@ public class ThreeDsServerClient {
     @Value("${client.three-ds-server.url}")
     private String url;
 
-    //    @Retryable(
-//            value = {
-//                    RestClientResponseException.class,
-//                    MessageTypeException.class
-//            },
-//            backoff = @Backoff(delayExpression = "#{${client.retry.delay-ms}}"),
-//            maxAttemptsExpression = "#{${client.retry.max-attempts}}")
     public RBKMoneyPreparationResponse preparationFlow(RBKMoneyPreparationRequest request) {
         log.info("Request: {}", request);
 
@@ -37,7 +32,10 @@ public class ThreeDsServerClient {
             log.info("Response: {}", response.getBody());
             return (RBKMoneyPreparationResponse) response.getBody();
         } else {
-            throw new MessageTypeException(response.getBody().toString());
+            throw new MessageTypeException(
+                    Optional.ofNullable(response.getBody())
+                            .map(Message::toString)
+                            .orElse("Message body is empty"));
         }
     }
 }

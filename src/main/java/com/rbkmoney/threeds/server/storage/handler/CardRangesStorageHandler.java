@@ -1,61 +1,50 @@
 package com.rbkmoney.threeds.server.storage.handler;
 
-import com.rbkmoney.damsel.three_ds_server_storage.*;
-import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
-import com.rbkmoney.threeds.server.storage.entity.LastUpdatedEntity;
-import com.rbkmoney.threeds.server.storage.mapper.CardRangeMapper;
-import com.rbkmoney.threeds.server.storage.repository.CardRangeRepository;
-import com.rbkmoney.threeds.server.storage.repository.LastUpdatedRepository;
+import com.rbkmoney.damsel.three_ds_server_storage.Action;
+import com.rbkmoney.damsel.three_ds_server_storage.CardRange;
+import com.rbkmoney.damsel.three_ds_server_storage.CardRangesStorageSrv;
+import com.rbkmoney.threeds.server.storage.service.CardRangeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
-    private final CardRangeRepository cardRangeRepository;
-    private final CardRangeMapper cardRangeMapper;
-    private final LastUpdatedRepository lastUpdatedRepository;
+    private final CardRangeService cardRangeService;
 
     @Override
-    public GetCardRangesResponse getCardRanges(GetCardRangesRequest request) throws CardRangesNotFound {
-        String providerId = request.getProviderId();
-
-        List<CardRange> cardRanges = getCardRanges(providerId);
-
-        String lastUpdatedAt = getLastUpdatedAt(providerId);
-
-        log.info("Return {} cardRanges for providerId={}, lastUpdatedAt={}", cardRanges.size(), providerId, lastUpdatedAt);
-
-        return new GetCardRangesResponse()
-                .setProviderId(providerId)
-                .setLastUpdatedAt(lastUpdatedAt)
-                .setCardRanges(cardRanges);
+    public boolean isStorageEmpty(String providerId) throws TException {
+        return cardRangeService.doesNotExistsCardRanges(providerId);
     }
 
-    private List<CardRange> getCardRanges(String providerId) throws CardRangesNotFound {
-        List<CardRangeEntity> entities = cardRangeRepository.findByPkProviderId(providerId);
+    @Override
+    public boolean isValidCardRanges(String providerId, List<CardRange> cardRanges) throws TException {
+        return cardRanges.stream()
+                .allMatch(cardRange -> isValidCardRange(providerId, cardRange));
+    }
 
-        if (entities.isEmpty()) {
-            throw new CardRangesNotFound("No cardRanges found for providerId=" + providerId);
+    @Override
+    public boolean isInCardRange(String providerId, long accountNumber) throws TException {
+        return cardRangeService.isInCardRange(providerId, accountNumber);
+    }
+
+    private boolean isValidCardRange(String providerId, CardRange cardRange) {
+        long startRange = cardRange.getRangeStart();
+        long endRange = cardRange.getRangeEnd();
+        Action action = cardRange.getAction();
+
+        if (action.isSetAddCardRange()) {
+            return cardRangeService.existsFreeSpaceForNewCardRange(providerId, startRange, endRange);
+        } else if (action.isSetModifyCardRange() || action.isSetDeleteCardRange()) {
+            return cardRangeService.existsCardRange(providerId, startRange, endRange);
         }
 
-        return entities.stream()
-                .map(cardRangeMapper::fromEntityToThrift)
-                .collect(toList());
-    }
-
-    private String getLastUpdatedAt(String providerId) throws CardRangesNotFound {
-        LastUpdatedEntity lastUpdatedEntity = lastUpdatedRepository.findByProviderId(providerId)
-                .orElseThrow(() -> new CardRangesNotFound("lastUpdatedAt is not set for providerId=" + providerId));
-
-        return TypeUtil.temporalToString(lastUpdatedEntity.getLastUpdatedAt());
+        throw new IllegalArgumentException(String.format("Action Indicator missing in Card Range Data, cardRange=%s", cardRange));
     }
 }

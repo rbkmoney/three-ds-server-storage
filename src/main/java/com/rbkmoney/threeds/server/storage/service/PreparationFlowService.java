@@ -13,10 +13,11 @@ public class PreparationFlowService {
 
     private final ThreeDsServerClient client;
     private final PreparationFlowDataUpdater dataUpdater;
+    private final SerialNumService serialNumService;
 
     @Async
     public void init(String providerId, String messageVersion) {
-        String serialNum = dataUpdater.getCurrentSerialNum(providerId);
+        String serialNum = serialNumService.getCurrentSerialNum(providerId);
 
         RBKMoneyPreparationResponse response = preparationFlow(providerId, serialNum, messageVersion);
 

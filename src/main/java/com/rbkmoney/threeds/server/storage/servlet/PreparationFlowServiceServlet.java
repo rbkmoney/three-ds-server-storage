@@ -1,6 +1,6 @@
 package com.rbkmoney.threeds.server.storage.servlet;
 
-import com.rbkmoney.damsel.three_ds_server_storage.PreparationFlowServiceSrv;
+import com.rbkmoney.damsel.three_ds_server_storage.PreparationFlowInitializerSrv;
 import com.rbkmoney.threeds.server.storage.handler.PreparationFlowServiceHandler;
 import com.rbkmoney.woody.thrift.impl.http.THServiceBuilder;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class PreparationFlowServiceServlet extends GenericServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         servlet = new THServiceBuilder()
-                .build(PreparationFlowServiceSrv.Iface.class, handler);
+                .build(PreparationFlowInitializerSrv.Iface.class, handler);
     }
 
     @Override
