@@ -13,17 +13,19 @@ public class PreparationFlowService {
 
     private final ThreeDsServerClient client;
     private final PreparationFlowDataUpdater dataUpdater;
+    private final SerialNumService serialNumService;
 
     @Async
     public void init(String providerId, String messageVersion) {
-        String serialNum = dataUpdater.getCurrentSerialNum(providerId);
+        String serialNum = serialNumService.get(providerId)
+                .orElse(null);
 
-        RBKMoneyPreparationResponse response = preparationFlow(providerId, serialNum, messageVersion);
+        RBKMoneyPreparationResponse response = preparationFlowRequest(providerId, serialNum, messageVersion);
 
         dataUpdater.update(response);
     }
 
-    private RBKMoneyPreparationResponse preparationFlow(String providerId, String serialNum, String messageVersion) {
+    private RBKMoneyPreparationResponse preparationFlowRequest(String providerId, String serialNum, String messageVersion) {
         RBKMoneyPreparationRequest request = RBKMoneyPreparationRequest.builder()
                 .providerId(providerId)
                 .serialNum(serialNum)

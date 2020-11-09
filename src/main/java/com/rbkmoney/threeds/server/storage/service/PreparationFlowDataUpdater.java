@@ -1,19 +1,11 @@
 package com.rbkmoney.threeds.server.storage.service;
 
-import com.rbkmoney.threeds.server.domain.rbkmoney.cardrange.CardRange;
+import com.rbkmoney.threeds.server.domain.rbkmoney.cardrange.RBKMoneyCardRange;
 import com.rbkmoney.threeds.server.domain.root.rbkmoney.RBKMoneyPreparationResponse;
-import com.rbkmoney.threeds.server.storage.entity.SerialNumEntity;
-import com.rbkmoney.threeds.server.storage.mapper.CardRangeMapper;
-import com.rbkmoney.threeds.server.storage.mapper.LastUpdatedMapper;
-import com.rbkmoney.threeds.server.storage.mapper.SerialNumMapper;
-import com.rbkmoney.threeds.server.storage.repository.CardRangeRepository;
-import com.rbkmoney.threeds.server.storage.repository.LastUpdatedRepository;
-import com.rbkmoney.threeds.server.storage.repository.SerialNumRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Slf4j
@@ -21,39 +13,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PreparationFlowDataUpdater {
 
-    private final SerialNumRepository serialNumRepository;
-    private final SerialNumMapper serialNumMapper;
-    private final CardRangeRepository cardRangeRepository;
-    private final CardRangeMapper cardRangeMapper;
-    private final LastUpdatedRepository lastUpdatedRepository;
-    private final LastUpdatedMapper lastUpdatedMapper;
+    private final SerialNumService serialNumService;
+    private final CardRangeService cardRangeService;
+    private final LastUpdatedService lastUpdatedService;
 
-    public String getCurrentSerialNum(String providerId) {
-        return serialNumRepository.findByProviderId(providerId)
-                .map(SerialNumEntity::getSerialNum)
-                .orElse(null);
-    }
-
-    @Transactional
     public void update(RBKMoneyPreparationResponse response) {
         String providerId = response.getProviderId();
         String serialNum = response.getSerialNum();
-        List<CardRange> addedCardRanges = response.getAddedCardRanges();
-        List<CardRange> modifiedCardRanges = response.getModifiedCardRanges();
-        List<CardRange> deletedCardRanges = response.getDeletedCardRanges();
+        List<RBKMoneyCardRange> domainCardRanges = response.getCardRanges();
 
-        log.info("Update preparation flow data for providerId={}: " +
-                        "serialNum={}, cardRanges=[added={}, modified={}, deleted={}]",
+        log.info(
+                "Update preparation flow data for providerId={}, serialNum={}, cardRanges={}",
                 providerId,
                 serialNum,
-                addedCardRanges.size(),
-                modifiedCardRanges.size(),
-                deletedCardRanges.size());
+                domainCardRanges.size());
 
-        cardRangeRepository.saveAll(cardRangeMapper.fromJsonToEntity(addedCardRanges, providerId));
-        cardRangeRepository.saveAll(cardRangeMapper.fromJsonToEntity(modifiedCardRanges, providerId));
-        cardRangeRepository.deleteAll(cardRangeMapper.fromJsonToEntity(deletedCardRanges, providerId));
-        serialNumRepository.save(serialNumMapper.toEntity(serialNum, providerId));
-        lastUpdatedRepository.save(lastUpdatedMapper.toEntity(providerId));
+        cardRangeService.saveAll(providerId, domainCardRanges);
+        cardRangeService.deleteAll(providerId, domainCardRanges);
+        serialNumService.save(providerId, serialNum);
+        lastUpdatedService.save(providerId);
     }
 }

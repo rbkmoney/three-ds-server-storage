@@ -18,43 +18,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CardRangesRepositoryTest extends AbstractDaoConfig {
 
     @Autowired
-    private CardRangeRepository repository;
+    private CardRangeRepository cardRangeRepository;
 
     @Before
     public void setUp() {
-        CardRangeEntity trap = CardRangeEntity.builder()
-                .pk(CardRangePk.builder()
-                        .providerId("TRAP")
-                        .rangeStart(1L)
-                        .rangeEnd(9L)
-                        .build())
-                .build();
+        CardRangeEntity trap = entity("TRAP", 1L, 9L);
 
-        repository.save(trap);
+        cardRangeRepository.deleteAll();
+        cardRangeRepository.save(trap);
     }
 
     @Test
     public void shouldSaveAndGetCardRanges() {
         // Given
-        CardRangeEntity first = CardRangeEntity.builder()
-                .pk(CardRangePk.builder()
-                        .providerId("1")
-                        .rangeStart(0L)
-                        .rangeEnd(1000L)
-                        .build())
-                .build();
-
-        CardRangeEntity second = CardRangeEntity.builder()
-                .pk(CardRangePk.builder()
-                        .providerId("1")
-                        .rangeStart(1001L)
-                        .rangeEnd(2000L)
-                        .build())
-                .build();
+        CardRangeEntity first = entity("1", 0L, 1000L);
+        CardRangeEntity second = entity("1", 1001L, 2000L);
 
         // When
-        repository.saveAll(List.of(first, second));
-        List<CardRangeEntity> saved = repository.findByPkProviderId("1");
+        cardRangeRepository.saveAll(List.of(first, second));
+        List<CardRangeEntity> saved = cardRangeRepository.findByPkProviderId("1");
 
         // Then
         assertThat(saved).containsExactlyInAnyOrder(first, second);
@@ -63,9 +45,10 @@ public class CardRangesRepositoryTest extends AbstractDaoConfig {
     @Test
     public void shouldReturnEmptyListIfNoCardRangesFound() {
         // Given
+        // -
 
         // When
-        List<CardRangeEntity> saved = repository.findByPkProviderId("2");
+        List<CardRangeEntity> saved = cardRangeRepository.findByPkProviderId("2");
 
         // Then
         assertThat(saved).isEmpty();
@@ -74,27 +57,14 @@ public class CardRangesRepositoryTest extends AbstractDaoConfig {
     @Test
     public void shouldDeleteCardRanges() {
         // Given
-        CardRangeEntity first = CardRangeEntity.builder()
-                .pk(CardRangePk.builder()
-                        .providerId("3")
-                        .rangeStart(0L)
-                        .rangeEnd(1000L)
-                        .build())
-                .build();
+        CardRangeEntity first = entity("3", 0L, 1000L);
+        CardRangeEntity second = entity("3", 1001L, 2000L);
 
-        CardRangeEntity second = CardRangeEntity.builder()
-                .pk(CardRangePk.builder()
-                        .providerId("3")
-                        .rangeStart(1001L)
-                        .rangeEnd(2000L)
-                        .build())
-                .build();
-
-        repository.saveAll(List.of(first, second));
+        cardRangeRepository.saveAll(List.of(first, second));
 
         // When
-        repository.deleteAll(List.of(first, second));
-        List<CardRangeEntity> saved = repository.findByPkProviderId("3");
+        cardRangeRepository.deleteAll(List.of(first, second));
+        List<CardRangeEntity> saved = cardRangeRepository.findByPkProviderId("3");
 
         // Then
         assertThat(saved).isEmpty();
@@ -103,25 +73,12 @@ public class CardRangesRepositoryTest extends AbstractDaoConfig {
     @Test
     public void shouldNotInsertDuplicates() {
         // Given
-        CardRangeEntity first = CardRangeEntity.builder()
-                .pk(CardRangePk.builder()
-                        .providerId("4")
-                        .rangeStart(0L)
-                        .rangeEnd(1000L)
-                        .build())
-                .build();
-
-        CardRangeEntity duplicate = CardRangeEntity.builder()
-                .pk(CardRangePk.builder()
-                        .providerId("4")
-                        .rangeStart(0L)
-                        .rangeEnd(1000L)
-                        .build())
-                .build();
+        CardRangeEntity first = entity("4", 0L, 1000L);
+        CardRangeEntity duplicate = entity("4", 0L, 1000L);
 
         // When
-        repository.saveAll(List.of(first, duplicate));
-        List<CardRangeEntity> saved = repository.findByPkProviderId("4");
+        cardRangeRepository.saveAll(List.of(first, duplicate));
+        List<CardRangeEntity> saved = cardRangeRepository.findByPkProviderId("4");
 
         // Then
         assertThat(saved).hasSize(1);
@@ -133,22 +90,26 @@ public class CardRangesRepositoryTest extends AbstractDaoConfig {
         List<CardRangeEntity> cardRanges = new ArrayList<>();
 
         for (long i = 0; i < 1000L; i++) {
-            CardRangeEntity range = CardRangeEntity.builder()
-                    .pk(CardRangePk.builder()
-                            .providerId("5")
-                            .rangeStart(i)
-                            .rangeEnd(i + 1)
-                            .build())
-                    .build();
+            CardRangeEntity range = entity("5", i, i + 1);
 
             cardRanges.add(range);
         }
 
         // When
-        repository.saveAll(cardRanges);
-        List<CardRangeEntity> saved = repository.findByPkProviderId("5");
+        cardRangeRepository.saveAll(cardRanges);
+        List<CardRangeEntity> saved = cardRangeRepository.findByPkProviderId("5");
 
         // Then
         assertThat(saved).hasSize(1000);
+    }
+
+    private CardRangeEntity entity(String providerId, long rangeStart, long rangeEnd) {
+        return CardRangeEntity.builder()
+                .pk(CardRangePk.builder()
+                        .providerId(providerId)
+                        .rangeStart(rangeStart)
+                        .rangeEnd(rangeEnd)
+                        .build())
+                .build();
     }
 }
