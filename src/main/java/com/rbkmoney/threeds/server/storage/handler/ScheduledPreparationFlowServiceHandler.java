@@ -33,6 +33,7 @@ public class ScheduledPreparationFlowServiceHandler implements ScheduledJobExecu
                 new InitRBKMoneyPreparationFlowRequest());
 
         log.info("Execute scheduled job for providerId={}", request.getProviderId());
+
         preparationFlowServiceHandler.initRBKMoneyPreparationFlow(request);
 
         return ByteBuffer.wrap(executeJobRequest.getServiceExecutionContext());

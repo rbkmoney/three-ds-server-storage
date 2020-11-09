@@ -24,13 +24,17 @@ public class ThreeDsServerClient {
     private String url;
 
     public RBKMoneyPreparationResponse preparationFlow(RBKMoneyPreparationRequest request) {
-        log.info("Request: {}", request);
+        log.info("Request to three-ds-server service: request={}", request.toString());
 
         ResponseEntity<Message> response = restTemplate.postForEntity(url, request, Message.class);
 
         if (response.getBody() instanceof RBKMoneyPreparationResponse) {
-            log.info("Response: {}", response.getBody());
-            return (RBKMoneyPreparationResponse) response.getBody();
+            RBKMoneyPreparationResponse rbkMoneyPreparationResponse = (RBKMoneyPreparationResponse) response.getBody();
+            log.info(
+                    "Response from three-ds-server service: providerId={}, cardRanges={}",
+                    rbkMoneyPreparationResponse.getProviderId(),
+                    rbkMoneyPreparationResponse.getCardRanges().size());
+            return rbkMoneyPreparationResponse;
         } else {
             throw new MessageTypeException(
                     Optional.ofNullable(response.getBody())

@@ -17,14 +17,15 @@ public class PreparationFlowService {
 
     @Async
     public void init(String providerId, String messageVersion) {
-        String serialNum = serialNumService.getCurrentSerialNum(providerId);
+        String serialNum = serialNumService.get(providerId)
+                .orElse(null);
 
-        RBKMoneyPreparationResponse response = preparationFlow(providerId, serialNum, messageVersion);
+        RBKMoneyPreparationResponse response = preparationFlowRequest(providerId, serialNum, messageVersion);
 
         dataUpdater.update(response);
     }
 
-    private RBKMoneyPreparationResponse preparationFlow(String providerId, String serialNum, String messageVersion) {
+    private RBKMoneyPreparationResponse preparationFlowRequest(String providerId, String serialNum, String messageVersion) {
         RBKMoneyPreparationRequest request = RBKMoneyPreparationRequest.builder()
                 .providerId(providerId)
                 .serialNum(serialNum)

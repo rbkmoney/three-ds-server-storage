@@ -22,8 +22,8 @@ public class PreparationFlowDataUpdater {
         String serialNum = response.getSerialNum();
         List<RBKMoneyCardRange> domainCardRanges = response.getCardRanges();
 
-        log.info("Update preparation flow data for providerId={}: " +
-                        "serialNum={}, cardRanges={}",
+        log.info(
+                "Update preparation flow data for providerId={}, serialNum={}, cardRanges={}",
                 providerId,
                 serialNum,
                 domainCardRanges.size());

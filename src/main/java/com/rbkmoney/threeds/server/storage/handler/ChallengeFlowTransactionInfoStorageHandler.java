@@ -3,9 +3,7 @@ package com.rbkmoney.threeds.server.storage.handler;
 import com.rbkmoney.damsel.three_ds_server_storage.ChallengeFlowTransactionInfo;
 import com.rbkmoney.damsel.three_ds_server_storage.ChallengeFlowTransactionInfoNotFound;
 import com.rbkmoney.damsel.three_ds_server_storage.ChallengeFlowTransactionInfoStorageSrv;
-import com.rbkmoney.threeds.server.storage.entity.ChallengeFlowTransactionInfoEntity;
-import com.rbkmoney.threeds.server.storage.mapper.ChallengeFlowTransactionInfoMapper;
-import com.rbkmoney.threeds.server.storage.repository.ChallengeFlowTransactionInfoRepository;
+import com.rbkmoney.threeds.server.storage.service.ChallengeFlowTransactionInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,24 +13,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ChallengeFlowTransactionInfoStorageHandler implements ChallengeFlowTransactionInfoStorageSrv.Iface {
 
-    private final ChallengeFlowTransactionInfoRepository repository;
-    private final ChallengeFlowTransactionInfoMapper mapper;
+    private final ChallengeFlowTransactionInfoService challengeFlowTransactionInfoService;
 
     @Override
     public void saveChallengeFlowTransactionInfo(ChallengeFlowTransactionInfo transactionInfo) {
-        ChallengeFlowTransactionInfoEntity entity = mapper.fromThriftToEntity(transactionInfo);
-
-        log.debug("Save challengeFlowTransactionInfo with transactionId={}", transactionInfo.getTransactionId());
-
-        repository.save(entity);
+        challengeFlowTransactionInfoService.save(transactionInfo);
     }
 
     @Override
     public ChallengeFlowTransactionInfo getChallengeFlowTransactionInfo(String transactionId) throws ChallengeFlowTransactionInfoNotFound {
-        log.debug("Return challengeFlowTransactionInfo with transactionId={}", transactionId);
-
-        return repository.findByTransactionId(transactionId)
-                .map(mapper::fromEntityToThrift)
+        return challengeFlowTransactionInfoService.get(transactionId)
                 .orElseThrow(() -> new ChallengeFlowTransactionInfoNotFound("transactionId=" + transactionId));
     }
 }

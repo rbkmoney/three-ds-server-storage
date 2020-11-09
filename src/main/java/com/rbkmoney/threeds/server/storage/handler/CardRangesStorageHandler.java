@@ -25,8 +25,12 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
     @Override
     public boolean isValidCardRanges(String providerId, List<CardRange> cardRanges) throws TException {
-        return cardRanges.stream()
+        boolean isValidCardRanges = cardRanges.stream()
                 .allMatch(cardRange -> isValidCardRange(providerId, cardRange));
+
+        log.info("isValidCardRanges={}, providerId={}, cardRanges={}", isValidCardRanges, providerId, cardRanges.size());
+
+        return isValidCardRanges;
     }
 
     @Override

@@ -17,6 +17,7 @@ public class PreparationFlowServiceHandler implements PreparationFlowInitializer
     @Override
     public void initRBKMoneyPreparationFlow(InitRBKMoneyPreparationFlowRequest request) {
         log.info("Init RBK.money preparation flow for providerId={}", request.getProviderId());
+
         preparationFlowService.init(request.getProviderId(), request.getMessageVersion());
     }
 }
