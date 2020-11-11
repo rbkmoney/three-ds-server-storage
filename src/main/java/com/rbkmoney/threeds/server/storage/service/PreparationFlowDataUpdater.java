@@ -22,15 +22,13 @@ public class PreparationFlowDataUpdater {
         String serialNum = response.getSerialNum();
         List<RBKMoneyCardRange> domainCardRanges = response.getCardRanges();
 
-        log.info(
-                "Update preparation flow data for providerId={}, serialNum={}, cardRanges={}",
-                providerId,
-                serialNum,
-                domainCardRanges.size());
+        log.info("Update preparation flow data, response={}", response.toString());
 
         cardRangeService.saveAll(providerId, domainCardRanges);
         cardRangeService.deleteAll(providerId, domainCardRanges);
         serialNumService.save(providerId, serialNum);
         lastUpdatedService.save(providerId);
+
+        log.info("Finish update preparation flow data, response={}", response.toString());
     }
 }
