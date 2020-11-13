@@ -6,6 +6,7 @@ import com.rbkmoney.threeds.server.domain.root.rbkmoney.RBKMoneyPreparationRespo
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,6 +22,7 @@ public class PreparationFlowService {
     private final RestTemplate restTemplate;
     private final PreparationFlowDataUpdater dataUpdater;
 
+    @Async
     public void init(String providerId, String messageVersion) {
         String serialNum = serialNumService.get(providerId).orElse(null);
 
