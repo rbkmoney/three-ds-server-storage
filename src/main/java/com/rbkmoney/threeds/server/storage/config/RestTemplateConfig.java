@@ -25,39 +25,4 @@ public class RestTemplateConfig {
                 .setReadTimeout(Duration.ofMillis(readTimeout))
                 .build();
     }
-//
-//    @Bean
-//    public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager(
-//            @Value("${httpConnPool.maxTotal}") int maxTotal,
-//            @Value("${httpConnPool.defaultMaxPerRoute}") int defaultMaxPerRoute) {
-//        PoolingHttpClientConnectionManager result = new PoolingHttpClientConnectionManager();
-//        result.setMaxTotal(maxTotal);
-//        result.setDefaultMaxPerRoute(defaultMaxPerRoute);
-//        return result;
-//    }
-//
-//    @Bean
-//    public RequestConfig requestConfig(@Value("${client.three-ds-server.timeout}") int networkTimeout) {
-//        return RequestConfig.custom()
-//                .setConnectionRequestTimeout(networkTimeout)
-//                .setConnectTimeout(networkTimeout)
-//                .setSocketTimeout(networkTimeout)
-//                .build();
-//    }
-//
-//    @Bean
-//    public CloseableHttpClient httpClient(PoolingHttpClientConnectionManager poolingHttpClientConnectionManager, RequestConfig requestConfig) {
-//        return HttpClientBuilder.create()
-//                .setConnectionManager(poolingHttpClientConnectionManager)
-//                .setDefaultRequestConfig(requestConfig)
-//                .build();
-//    }
-//
-//    @Bean
-//    public RestTemplate restTemplate(@Value("${client.three-ds-server.timeout}") int networkTimeout, HttpClient httpClient) {
-//        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-//        requestFactory.setHttpClient(httpClient);
-//        requestFactory.setReadTimeout(networkTimeout);
-//        return new RestTemplate(requestFactory);
-//    }
 }

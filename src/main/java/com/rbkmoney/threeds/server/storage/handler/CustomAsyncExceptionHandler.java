@@ -1,4 +1,4 @@
-package com.rbkmoney.threeds.server.storage.config;
+package com.rbkmoney.threeds.server.storage.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
@@ -10,10 +10,11 @@ public class CustomAsyncExceptionHandler implements AsyncUncaughtExceptionHandle
 
     @Override
     public void handleUncaughtException(Throwable throwable, Method method, Object... obj) {
-        log.info("Exception message - " + throwable.getMessage());
-        log.info("Method name - " + method.getName());
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Method name - ").append(method.getName());
         for (Object param : obj) {
-            log.info("Parameter value - " + param);
+            stringBuilder.append("Parameter value - ").append(param);
         }
+        log.warn(stringBuilder.toString(), throwable);
     }
 }

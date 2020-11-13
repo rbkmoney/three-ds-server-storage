@@ -1,5 +1,6 @@
 package com.rbkmoney.threeds.server.storage.config;
 
+import com.rbkmoney.threeds.server.storage.handler.CustomAsyncExceptionHandler;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;

@@ -24,10 +24,10 @@ public class PreparationFlowDataUpdater {
 
         log.info("Update preparation flow data, response={}", response.toString());
 
-//        cardRangeService.saveAll(providerId, domainCardRanges);
-//        cardRangeService.deleteAll(providerId, domainCardRanges);
-//        serialNumService.save(providerId, serialNum);
-//        lastUpdatedService.save(providerId);
+        cardRangeService.saveAll(providerId, domainCardRanges);
+        cardRangeService.deleteAll(providerId, domainCardRanges);
+        serialNumService.save(providerId, serialNum);
+        lastUpdatedService.save(providerId);
 
         log.info("Finish update preparation flow data, response={}", response.toString());
     }
