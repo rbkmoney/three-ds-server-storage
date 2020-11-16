@@ -45,4 +45,5 @@ spring:
 client:
   three-ds-server:
     url: http://localhost:8080/sdk
-    timeout: 5000
+    readTimeout: 1860000
+    connectTimeout: 5000
