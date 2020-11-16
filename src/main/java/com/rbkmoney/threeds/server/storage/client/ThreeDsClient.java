@@ -32,7 +32,7 @@ public class ThreeDsClient {
         if (message instanceof RBKMoneyPreparationResponse) {
             RBKMoneyPreparationResponse rbkMoneyPreparationResponse = (RBKMoneyPreparationResponse) message;
 
-            log.info("Response from 'three-ds-serve'r service: response={}", rbkMoneyPreparationResponse.toString());
+            log.info("Response from 'three-ds-server' service: response={}", rbkMoneyPreparationResponse.toString());
 
             return rbkMoneyPreparationResponse;
         } else {
