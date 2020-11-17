@@ -10,6 +10,8 @@ import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 @Slf4j
 @Service
@@ -25,12 +27,17 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
     @Override
     public boolean isValidCardRanges(String providerId, List<CardRange> cardRanges) throws TException {
-        boolean isValidCardRanges = cardRanges.stream()
-                .allMatch(cardRange -> isValidCardRange(providerId, cardRange));
+        Optional<CardRange> cardRange = cardRanges.stream()
+                .filter(Predicate.not(cr -> isValidCardRange(providerId, cr)))
+                .findFirst();
 
-        log.info("isValidCardRanges={}, providerId={}, cardRanges={}", isValidCardRanges, providerId, cardRanges.size());
+        if (cardRange.isPresent()) {
+            log.warn("Exist invalid CardRange, check finished, cardRange={}", cardRange.toString());
+        } else {
+            log.info("CardRanges is valid, providerId={}, cardRanges={}", providerId, cardRanges.size());
+        }
 
-        return isValidCardRanges;
+        return cardRange.isEmpty();
     }
 
     @Override
