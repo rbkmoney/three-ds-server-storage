@@ -110,6 +110,7 @@ public class CardRangesRepositoryTest extends AbstractDaoConfig {
                         .rangeStart(rangeStart)
                         .rangeEnd(rangeEnd)
                         .build())
+                .threeDsMethodUrl("url")
                 .build();
     }
 }

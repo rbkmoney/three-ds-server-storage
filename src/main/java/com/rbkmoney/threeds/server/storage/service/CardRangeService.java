@@ -8,12 +8,15 @@ import com.rbkmoney.threeds.server.storage.mapper.CardRangeMapper;
 import com.rbkmoney.threeds.server.storage.repository.CardRangeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import static com.rbkmoney.threeds.server.domain.cardrange.ActionInd.*;
 
@@ -115,11 +118,8 @@ public class CardRangeService {
         return existsCardRange;
     }
 
-    public boolean isInCardRange(String providerId, long accountNumber) {
-        boolean isInCardRange = cardRangeRepository.existsCardRangeEntityByPkProviderIdIsAndPkRangeStartLessThanEqualAndPkRangeEndGreaterThanEqual(providerId, accountNumber, accountNumber);
-
-        log.info("isInCardRange={}, providerId={}, accountNumber={}", isInCardRange, providerId, accountNumber);
-
-        return isInCardRange;
+    public Optional<String> getProviderId(long accountNumber) {
+        Page<String> pages = cardRangeRepository.getProviderIds(accountNumber, PageRequest.of(0, 1));
+        return pages.stream().findFirst();
     }
 }

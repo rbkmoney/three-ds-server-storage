@@ -23,6 +23,6 @@ public class ChallengeFlowTransactionInfoStorageHandler implements ChallengeFlow
     @Override
     public ChallengeFlowTransactionInfo getChallengeFlowTransactionInfo(String transactionId) throws ChallengeFlowTransactionInfoNotFound {
         return challengeFlowTransactionInfoService.get(transactionId)
-                .orElseThrow(() -> new ChallengeFlowTransactionInfoNotFound("transactionId=" + transactionId));
+                .orElseThrow(ChallengeFlowTransactionInfoNotFound::new);
     }
 }

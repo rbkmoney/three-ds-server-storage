@@ -3,15 +3,16 @@ package com.rbkmoney.threeds.server.storage.handler;
 import com.rbkmoney.damsel.three_ds_server_storage.Action;
 import com.rbkmoney.damsel.three_ds_server_storage.CardRange;
 import com.rbkmoney.damsel.three_ds_server_storage.CardRangesStorageSrv;
+import com.rbkmoney.damsel.three_ds_server_storage.DirectoryServerProviderIDNotFound;
 import com.rbkmoney.threeds.server.storage.service.CardRangeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
+
+import static java.util.function.Predicate.not;
 
 @Slf4j
 @Service
@@ -21,14 +22,13 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
     private final CardRangeService cardRangeService;
 
     @Override
-    public boolean isStorageEmpty(String providerId) throws TException {
-        return cardRangeService.doesNotExistsCardRanges(providerId);
-    }
+    public boolean isValidCardRanges(String providerId, List<CardRange> cardRanges) {
+        if (cardRangeService.doesNotExistsCardRanges(providerId)) {
+            return true;
+        }
 
-    @Override
-    public boolean isValidCardRanges(String providerId, List<CardRange> cardRanges) throws TException {
         Optional<CardRange> cardRange = cardRanges.stream()
-                .filter(Predicate.not(cr -> isValidCardRange(providerId, cr)))
+                .filter(not(cr -> isValidCardRange(providerId, cr)))
                 .findFirst();
 
         if (cardRange.isPresent()) {
@@ -41,8 +41,9 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
     }
 
     @Override
-    public boolean isInCardRange(String providerId, long accountNumber) throws TException {
-        return cardRangeService.isInCardRange(providerId, accountNumber);
+    public String getDirectoryServerProviderId(long accountNumber) throws DirectoryServerProviderIDNotFound {
+        return cardRangeService.getProviderId(accountNumber)
+                .orElseThrow(DirectoryServerProviderIDNotFound::new);
     }
 
     private boolean isValidCardRange(String providerId, CardRange cardRange) {
@@ -51,6 +52,9 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
         Action action = cardRange.getAction();
 
         if (action.isSetAddCardRange()) {
+            if (cardRangeService.existsCardRange(providerId, startRange, endRange)) {
+                return true;
+            }
             return cardRangeService.existsFreeSpaceForNewCardRange(providerId, startRange, endRange);
         } else if (action.isSetModifyCardRange() || action.isSetDeleteCardRange()) {
             return cardRangeService.existsCardRange(providerId, startRange, endRange);

@@ -8,9 +8,11 @@ import com.rbkmoney.woody.thrift.impl.http.THSpawnClientBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageImpl;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,24 +42,17 @@ public class HandlerTest extends AbstractConfigWithoutDao {
                 .withAddress(new URI("http://localhost:" + port + "/three-ds-server-storage/challenge-flow-transaction-info"))
                 .withNetworkTimeout(TIMEOUT)
                 .build(ChallengeFlowTransactionInfoStorageSrv.Iface.class);
+        when(cardRangeRepository.existsCardRangeEntitiesByPkProviderIdIs(PROVIDER_ID)).thenReturn(true);
+        when(cardRangeRepository.existsCardRangeEntityByPkEquals(any())).thenReturn(false);
     }
 
     @Test
     public void shouldReturnTrueForEmptyStorage() throws Exception {
         when(cardRangeRepository.existsCardRangeEntitiesByPkProviderIdIs(PROVIDER_ID)).thenReturn(false);
 
-        boolean expected = cardRangesStorageClient.isStorageEmpty(PROVIDER_ID);
+        boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(new CardRange(1, 2, add())));
 
         assertTrue(expected);
-    }
-
-    @Test
-    public void shouldReturnFalseForNotEmptyStorage() throws Exception {
-        when(cardRangeRepository.existsCardRangeEntitiesByPkProviderIdIs(PROVIDER_ID)).thenReturn(true);
-
-        boolean expected = cardRangesStorageClient.isStorageEmpty(PROVIDER_ID);
-
-        assertFalse(expected);
     }
 
     @Test
@@ -109,7 +104,6 @@ public class HandlerTest extends AbstractConfigWithoutDao {
     @Test
     public void shouldReturnFalseForInvalidAddInCardRanges() throws Exception {
         when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong())).thenReturn(false);
-        when(cardRangeRepository.existsCardRangeEntityByPkEquals(any())).thenReturn(true);
 
         boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, cardRanges());
 
@@ -139,21 +133,20 @@ public class HandlerTest extends AbstractConfigWithoutDao {
     }
 
     @Test
-    public void shouldReturnTrueForAcctNumberInRange() throws Exception {
-        when(cardRangeRepository.existsCardRangeEntityByPkProviderIdIsAndPkRangeStartLessThanEqualAndPkRangeEndGreaterThanEqual(eq(PROVIDER_ID), anyLong(), anyLong())).thenReturn(true);
+    public void shouldReturnDsProviderIdForAcctNumberInRange() throws Exception {
+        when(cardRangeRepository.getProviderIds(anyLong(), any())).thenReturn(new PageImpl<>(List.of(PROVIDER_ID)));
 
-        boolean expected = cardRangesStorageClient.isInCardRange(PROVIDER_ID, 1L);
+        String expected = cardRangesStorageClient.getDirectoryServerProviderId(1L);
 
-        assertTrue(expected);
+        assertNotNull(expected);
+        assertEquals(PROVIDER_ID, expected);
     }
 
-    @Test
-    public void shouldReturnFalseForAcctNumberOutRange() throws Exception {
-        when(cardRangeRepository.existsCardRangeEntityByPkProviderIdIsAndPkRangeStartLessThanEqualAndPkRangeEndGreaterThanEqual(eq(PROVIDER_ID), anyLong(), anyLong())).thenReturn(false);
+    @Test(expected = DirectoryServerProviderIDNotFound.class)
+    public void shouldReturnNotFoundForAcctNumberOutRange() throws Exception {
+        when(cardRangeRepository.getProviderIds(anyLong(), any())).thenReturn(new PageImpl<>(new ArrayList<>()));
 
-        boolean expected = cardRangesStorageClient.isInCardRange(PROVIDER_ID, 1L);
-
-        assertFalse(expected);
+        cardRangesStorageClient.getDirectoryServerProviderId(1L);
     }
 
     @Test(expected = ChallengeFlowTransactionInfoNotFound.class)

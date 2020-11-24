@@ -17,6 +17,7 @@ public class CardRangeMapper {
                         .rangeStart(parseLong(cardRange.getStartRange()))
                         .rangeEnd(parseLong(cardRange.getEndRange()))
                         .build())
+                .threeDsMethodUrl(cardRange.getThreeDSMethodURL())
                 .build();
     }
 }
