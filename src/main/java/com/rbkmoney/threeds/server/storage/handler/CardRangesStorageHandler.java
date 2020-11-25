@@ -4,12 +4,13 @@ import com.rbkmoney.damsel.three_ds_server_storage.*;
 import com.rbkmoney.threeds.server.storage.service.CardRangeService;
 import com.rbkmoney.threeds.server.storage.service.LastUpdatedService;
 import com.rbkmoney.threeds.server.storage.service.SerialNumberService;
+import com.rbkmoney.threeds.server.storage.utils.CardRangeWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.rbkmoney.threeds.server.storage.utils.CardRangeWrapper.toStringHideCardRange;
 import static java.util.function.Predicate.not;
@@ -24,10 +25,10 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
     private final LastUpdatedService lastUpdatedService;
 
     @Override
-    public void updateCardRanges(UpdateRBKMoneyPreparationFlowRequest updateRBKMoneyPreparationFlowRequest) {
-        String providerId = updateRBKMoneyPreparationFlowRequest.getProviderId();
-        String serialNumber = updateRBKMoneyPreparationFlowRequest.getSerialNumber();
-        List<CardRange> tCardRanges = updateRBKMoneyPreparationFlowRequest.getCardRanges();
+    public void updateCardRanges(UpdateCardRangesRequest request) {
+        String providerId = request.getProviderId();
+        String serialNumber = request.getSerialNumber();
+        List<CardRange> tCardRanges = request.getCardRanges();
 
         log.info(
                 "Update preparation flow data, providerId={}, serialNumber={}, cardRanges={}",
@@ -58,20 +59,21 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
             return true;
         }
 
-        Optional<CardRange> invalidCardRange = cardRanges.stream()
+        List<CardRange> invalidCardRanges = cardRanges.stream()
                 .filter(not(cr -> isValidCardRange(providerId, cr)))
-                .findFirst();
+                .collect(Collectors.toList());
 
-        if (invalidCardRange.isPresent()) {
-            log.warn(
-                    "CardRanges is invalid, providerId={}, cardRange={}",
-                    providerId,
-                    toStringHideCardRange(invalidCardRange.get()));
+        if (!invalidCardRanges.isEmpty()) {
+            String hideCardRanges = invalidCardRanges.stream()
+                    .map(CardRangeWrapper::toStringHideCardRange)
+                    .collect(Collectors.joining(", ", "[", "]"));
+
+            log.warn("CardRanges is invalid, providerId={}, cardRanges={}", providerId, hideCardRanges);
         } else {
             log.info("CardRanges is valid, providerId={}, cardRanges={}", providerId, cardRanges.size());
         }
 
-        return invalidCardRange.isEmpty();
+        return invalidCardRanges.isEmpty();
     }
 
     @Override
