@@ -96,8 +96,8 @@ public class PreparationFlowServiceTest extends AbstractDaoConfig {
 
         preparationFlowService.init(PROVIDER_ID, MESSAGE_VERSION);
 
-        assertThat(cardRangeRepository.findAll()).hasSize(0);
-        assertThat(lastUpdatedRepository.findAll()).hasSize(0);
+        assertThat(cardRangeRepository.findAll()).hasSize(1);
+        assertThat(lastUpdatedRepository.findAll()).hasSize(1);
         assertThat(serialNumberRepository.findAll()).hasSize(0);
     }
 

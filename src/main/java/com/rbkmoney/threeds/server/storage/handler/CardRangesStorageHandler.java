@@ -29,6 +29,7 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
         String providerId = request.getProviderId();
         String serialNumber = request.getSerialNumber();
         List<CardRange> tCardRanges = request.getCardRanges();
+        boolean isNeedStorageClear = request.isIsNeedStorageClear();
 
         log.info(
                 "Update preparation flow data, providerId={}, serialNumber={}, cardRanges={}",
@@ -36,7 +37,14 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
                 serialNumber,
                 tCardRanges.size());
 
-        cardRangeService.deleteAll(providerId, tCardRanges);
+        if (isNeedStorageClear) {
+            cardRangeService.deleteAll(providerId);
+            lastUpdatedService.delete(providerId);
+            serialNumberService.delete(providerId);
+        } else {
+            cardRangeService.deleteAll(providerId, tCardRanges);
+        }
+
         cardRangeService.saveAll(providerId, tCardRanges);
         lastUpdatedService.save(providerId);
         serialNumberService.save(providerId, serialNumber);

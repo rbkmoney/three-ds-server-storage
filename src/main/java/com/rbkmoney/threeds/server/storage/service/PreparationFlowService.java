@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class PreparationFlowService {
 
-    private final CardRangeService cardRangeService;
     private final SerialNumberService serialNumberService;
-    private final LastUpdatedService lastUpdatedService;
     private final ThreeDsClient threeDsClient;
 
     @Async
@@ -29,9 +27,9 @@ public class PreparationFlowService {
             ErroWrapper erroWrapper = (ErroWrapper) message;
             ErrorCode errorCode = erroWrapper.getErrorCode().getValue();
             if (errorCode != ErrorCode.SENT_MESSAGE_LIMIT_EXCEEDED_103) {
-                cardRangeService.deleteAll(providerId);
+                // при любой ошибке формируем требование к следующему запросу на полное обновление диапазонов
+                // при этом временно остается текущая схема с карточными диапазонами, уже записанными в базу
                 serialNumberService.delete(providerId);
-                lastUpdatedService.delete(providerId);
             }
         }
     }
