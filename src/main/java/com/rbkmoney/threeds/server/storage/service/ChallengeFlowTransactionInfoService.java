@@ -24,19 +24,26 @@ public class ChallengeFlowTransactionInfoService {
         ChallengeFlowTransactionInfoEntity entity = mapper.fromThriftToEntity(transactionInfo);
 
         log.info(
-                "Trying to save ChallengeFlowTransactionInfo with providerId={}, transactionId={}",
+                "Trying to save ChallengeFlowTransactionInfo, providerId={}, transactionId={}",
                 entity.getProviderId(),
                 entity.getTransactionId());
 
         repository.save(entity);
+
+        log.info(
+                "ChallengeFlowTransactionInfo has been saved, providerId={}, transactionId={}",
+                entity.getProviderId(),
+                entity.getTransactionId());
     }
 
     public Optional<ChallengeFlowTransactionInfo> get(String transactionId) {
-        log.info(
-                "Trying to get ChallengeFlowTransactionInfo with transactionId={}",
-                transactionId);
+        log.info("Trying to get ChallengeFlowTransactionInfo, transactionId={}", transactionId);
 
-        return repository.findByTransactionId(transactionId)
+        Optional<ChallengeFlowTransactionInfo> transactionInfo = repository.findByTransactionId(transactionId)
                 .map(mapper::fromEntityToThrift);
+
+        log.info("getChallengeFlowTransactionInfo={}, transactionId={}", transactionInfo.toString(), transactionId);
+
+        return transactionInfo;
     }
 }

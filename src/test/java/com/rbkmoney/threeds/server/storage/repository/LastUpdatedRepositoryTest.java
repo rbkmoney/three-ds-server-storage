@@ -5,9 +5,7 @@ import com.rbkmoney.threeds.server.storage.entity.LastUpdatedEntity;
 import com.rbkmoney.threeds.server.storage.mapper.LastUpdatedMapper;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(SpringRunner.class)
 public class LastUpdatedRepositoryTest extends AbstractDaoConfig {
 
     @Autowired
@@ -63,5 +60,23 @@ public class LastUpdatedRepositoryTest extends AbstractDaoConfig {
         assertThat(lastSaved.get()).isEqualTo(third);
         assertThat(firstSaved.get().getLastUpdatedAt()).isBefore(lastSaved.get().getLastUpdatedAt());
         assertEquals(2, repository.findAll().size());
+    }
+
+    @Test
+    public void shouldDeleteLastUpdatedByProviderId() {
+        repository.save(mapper.toEntity("1"));
+        repository.save(mapper.toEntity("2"));
+
+        // When
+        repository.deleteById("2");
+
+        Optional<LastUpdatedEntity> saved = repository.findByProviderId("2");
+
+        // Then
+        assertThat(saved).isEmpty();
+
+        saved = repository.findByProviderId("1");
+
+        assertThat(saved).isNotEmpty();
     }
 }

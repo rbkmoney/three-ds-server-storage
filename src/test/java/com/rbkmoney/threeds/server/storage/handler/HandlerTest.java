@@ -42,13 +42,32 @@ public class HandlerTest extends AbstractConfigWithoutDao {
                 .withAddress(new URI("http://localhost:" + port + "/three-ds-server-storage/challenge-flow-transaction-info"))
                 .withNetworkTimeout(TIMEOUT)
                 .build(ChallengeFlowTransactionInfoStorageSrv.Iface.class);
-        when(cardRangeRepository.existsCardRangeEntitiesByPkProviderIdIs(PROVIDER_ID)).thenReturn(true);
+
+        when(cardRangeRepository.existsCardRangeEntitiesByPkProviderIdIs(eq(PROVIDER_ID))).thenReturn(true);
         when(cardRangeRepository.existsCardRangeEntityByPkEquals(any())).thenReturn(false);
     }
 
     @Test
     public void shouldReturnTrueForEmptyStorage() throws Exception {
-        when(cardRangeRepository.existsCardRangeEntitiesByPkProviderIdIs(PROVIDER_ID)).thenReturn(false);
+        when(cardRangeRepository.existsCardRangeEntitiesByPkProviderIdIs(eq(PROVIDER_ID))).thenReturn(false);
+
+        boolean expected = cardRangesStorageClient.isStorageEmpty(PROVIDER_ID);
+
+        assertTrue(expected);
+    }
+
+    @Test
+    public void shouldReturnFalseForNotEmptyStorage() throws Exception {
+        when(cardRangeRepository.existsCardRangeEntitiesByPkProviderIdIs(eq(PROVIDER_ID))).thenReturn(true);
+
+        boolean expected = cardRangesStorageClient.isStorageEmpty(PROVIDER_ID);
+
+        assertFalse(expected);
+    }
+
+    @Test
+    public void shouldReturnValidCardRangesForEmptyStorage() throws Exception {
+        when(cardRangeRepository.existsCardRangeEntitiesByPkProviderIdIs(eq(PROVIDER_ID))).thenReturn(false);
 
         boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(new CardRange(1, 2, add())));
 
@@ -143,14 +162,14 @@ public class HandlerTest extends AbstractConfigWithoutDao {
     }
 
     @Test(expected = DirectoryServerProviderIDNotFound.class)
-    public void shouldReturnNotFoundForAcctNumberOutRange() throws Exception {
+    public void shouldThrowNotFoundForAcctNumberOutRange() throws Exception {
         when(cardRangeRepository.getProviderIds(anyLong(), any())).thenReturn(new PageImpl<>(new ArrayList<>()));
 
         cardRangesStorageClient.getDirectoryServerProviderId(1L);
     }
 
     @Test(expected = ChallengeFlowTransactionInfoNotFound.class)
-    public void shouldThrowWhenNullTransactionTest() throws Exception {
+    public void shouldThrowNotFoundWhenNullTransactionTest() throws Exception {
         String transactionId = UUID.randomUUID().toString();
 
         when(challengeFlowTransactionInfoRepository.findByTransactionId(transactionId)).thenReturn(Optional.empty());

@@ -2,6 +2,7 @@ package com.rbkmoney.threeds.server.storage.config;
 
 import com.rbkmoney.threeds.server.storage.handler.CustomAsyncExceptionHandler;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -11,7 +12,8 @@ import java.util.concurrent.Executor;
 
 @Configuration
 @EnableAsync
-public class SpringAsyncConfig implements AsyncConfigurer {
+@ConditionalOnProperty(value = "asyncConfig.enabled", havingValue = "true")
+public class AsyncConfig implements AsyncConfigurer {
 
     @Override
     public Executor getAsyncExecutor() {

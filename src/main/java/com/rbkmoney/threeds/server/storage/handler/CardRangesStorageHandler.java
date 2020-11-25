@@ -1,10 +1,9 @@
 package com.rbkmoney.threeds.server.storage.handler;
 
-import com.rbkmoney.damsel.three_ds_server_storage.Action;
-import com.rbkmoney.damsel.three_ds_server_storage.CardRange;
-import com.rbkmoney.damsel.three_ds_server_storage.CardRangesStorageSrv;
-import com.rbkmoney.damsel.three_ds_server_storage.DirectoryServerProviderIDNotFound;
+import com.rbkmoney.damsel.three_ds_server_storage.*;
 import com.rbkmoney.threeds.server.storage.service.CardRangeService;
+import com.rbkmoney.threeds.server.storage.service.LastUpdatedService;
+import com.rbkmoney.threeds.server.storage.service.SerialNumberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.rbkmoney.threeds.server.storage.utils.CardRangeWrapper.toStringHideCardRange;
 import static java.util.function.Predicate.not;
 
 @Slf4j
@@ -20,24 +20,58 @@ import static java.util.function.Predicate.not;
 public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
     private final CardRangeService cardRangeService;
+    private final SerialNumberService serialNumberService;
+    private final LastUpdatedService lastUpdatedService;
+
+    @Override
+    public void updateCardRanges(UpdateRBKMoneyPreparationFlowRequest updateRBKMoneyPreparationFlowRequest) {
+        String providerId = updateRBKMoneyPreparationFlowRequest.getProviderId();
+        String serialNumber = updateRBKMoneyPreparationFlowRequest.getSerialNumber();
+        List<CardRange> tCardRanges = updateRBKMoneyPreparationFlowRequest.getCardRanges();
+
+        log.info(
+                "Update preparation flow data, providerId={}, serialNumber={}, cardRanges={}",
+                providerId,
+                serialNumber,
+                tCardRanges.size());
+
+        cardRangeService.deleteAll(providerId, tCardRanges);
+        cardRangeService.saveAll(providerId, tCardRanges);
+        lastUpdatedService.save(providerId);
+        serialNumberService.save(providerId, serialNumber);
+
+        log.info(
+                "Finish update preparation flow data, providerId={}, serialNumber={}, cardRanges={}",
+                providerId,
+                serialNumber,
+                tCardRanges.size());
+    }
+
+    @Override
+    public boolean isStorageEmpty(String providerId) {
+        return cardRangeService.doesNotExistsCardRanges(providerId);
+    }
 
     @Override
     public boolean isValidCardRanges(String providerId, List<CardRange> cardRanges) {
-        if (cardRangeService.doesNotExistsCardRanges(providerId)) {
+        if (isStorageEmpty(providerId)) {
             return true;
         }
 
-        Optional<CardRange> cardRange = cardRanges.stream()
+        Optional<CardRange> invalidCardRange = cardRanges.stream()
                 .filter(not(cr -> isValidCardRange(providerId, cr)))
                 .findFirst();
 
-        if (cardRange.isPresent()) {
-            log.warn("Exist invalid CardRange, check finished, cardRange={}", cardRange.toString());
+        if (invalidCardRange.isPresent()) {
+            log.warn(
+                    "CardRanges is invalid, providerId={}, cardRange={}",
+                    providerId,
+                    toStringHideCardRange(invalidCardRange.get()));
         } else {
             log.info("CardRanges is valid, providerId={}, cardRanges={}", providerId, cardRanges.size());
         }
 
-        return cardRange.isEmpty();
+        return invalidCardRange.isEmpty();
     }
 
     @Override
@@ -47,19 +81,17 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
     }
 
     private boolean isValidCardRange(String providerId, CardRange cardRange) {
-        long startRange = cardRange.getRangeStart();
-        long endRange = cardRange.getRangeEnd();
         Action action = cardRange.getAction();
 
         if (action.isSetAddCardRange()) {
-            if (cardRangeService.existsCardRange(providerId, startRange, endRange)) {
+            if (cardRangeService.existsCardRange(providerId, cardRange)) {
                 return true;
             }
-            return cardRangeService.existsFreeSpaceForNewCardRange(providerId, startRange, endRange);
+            return cardRangeService.existsFreeSpaceForNewCardRange(providerId, cardRange);
         } else if (action.isSetModifyCardRange() || action.isSetDeleteCardRange()) {
-            return cardRangeService.existsCardRange(providerId, startRange, endRange);
+            return cardRangeService.existsCardRange(providerId, cardRange);
         }
 
-        throw new IllegalArgumentException(String.format("Action Indicator missing in Card Range Data, cardRange=%s", cardRange));
+        throw new IllegalArgumentException(String.format("Action Indicator missing in CardRange, cardRange=%s", toStringHideCardRange(cardRange)));
     }
 }

@@ -4,9 +4,7 @@ import com.rbkmoney.threeds.server.storage.config.AbstractDaoConfig;
 import com.rbkmoney.threeds.server.storage.entity.ChallengeFlowTransactionInfoEntity;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -14,8 +12,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
-
-@RunWith(SpringRunner.class)
 public class ChallengeFlowTransactionInfoRepositoryTest extends AbstractDaoConfig {
 
     @Autowired

@@ -5,27 +5,24 @@ import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 import com.rbkmoney.threeds.server.storage.entity.CardRangePk;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
 public class CardRangesRepositoryTest extends AbstractDaoConfig {
 
     @Autowired
-    private CardRangeRepository cardRangeRepository;
+    private CardRangeRepository repository;
 
     @Before
     public void setUp() {
         CardRangeEntity trap = entity("TRAP", 1L, 9L);
 
-        cardRangeRepository.deleteAll();
-        cardRangeRepository.save(trap);
+        repository.deleteAll();
+        repository.save(trap);
     }
 
     @Test
@@ -35,8 +32,8 @@ public class CardRangesRepositoryTest extends AbstractDaoConfig {
         CardRangeEntity second = entity("1", 1001L, 2000L);
 
         // When
-        cardRangeRepository.saveAll(List.of(first, second));
-        List<CardRangeEntity> saved = cardRangeRepository.findByPkProviderId("1");
+        repository.saveAll(List.of(first, second));
+        List<CardRangeEntity> saved = repository.findByPkProviderId("1");
 
         // Then
         assertThat(saved).containsExactlyInAnyOrder(first, second);
@@ -48,7 +45,7 @@ public class CardRangesRepositoryTest extends AbstractDaoConfig {
         // -
 
         // When
-        List<CardRangeEntity> saved = cardRangeRepository.findByPkProviderId("2");
+        List<CardRangeEntity> saved = repository.findByPkProviderId("2");
 
         // Then
         assertThat(saved).isEmpty();
@@ -60,11 +57,11 @@ public class CardRangesRepositoryTest extends AbstractDaoConfig {
         CardRangeEntity first = entity("3", 0L, 1000L);
         CardRangeEntity second = entity("3", 1001L, 2000L);
 
-        cardRangeRepository.saveAll(List.of(first, second));
+        repository.saveAll(List.of(first, second));
 
         // When
-        cardRangeRepository.deleteAll(List.of(first, second));
-        List<CardRangeEntity> saved = cardRangeRepository.findByPkProviderId("3");
+        repository.deleteAll(List.of(first, second));
+        List<CardRangeEntity> saved = repository.findByPkProviderId("3");
 
         // Then
         assertThat(saved).isEmpty();
@@ -77,8 +74,8 @@ public class CardRangesRepositoryTest extends AbstractDaoConfig {
         CardRangeEntity duplicate = entity("4", 0L, 1000L);
 
         // When
-        cardRangeRepository.saveAll(List.of(first, duplicate));
-        List<CardRangeEntity> saved = cardRangeRepository.findByPkProviderId("4");
+        repository.saveAll(List.of(first, duplicate));
+        List<CardRangeEntity> saved = repository.findByPkProviderId("4");
 
         // Then
         assertThat(saved).hasSize(1);
@@ -96,11 +93,32 @@ public class CardRangesRepositoryTest extends AbstractDaoConfig {
         }
 
         // When
-        cardRangeRepository.saveAll(cardRanges);
-        List<CardRangeEntity> saved = cardRangeRepository.findByPkProviderId("5");
+        repository.saveAll(cardRanges);
+        List<CardRangeEntity> saved = repository.findByPkProviderId("5");
 
         // Then
         assertThat(saved).hasSize(1000);
+    }
+
+    @Test
+    public void shouldDeleteCardRangesByProviderId() {
+        // Given
+        CardRangeEntity first = entity("3", 0L, 1000L);
+        CardRangeEntity second = entity("3", 1001L, 2000L);
+        CardRangeEntity third = entity("4", 1001L, 2000L);
+
+        repository.saveAll(List.of(first, second, third));
+
+        // When
+        repository.deleteAllByPkProviderId("3");
+        List<CardRangeEntity> saved = repository.findByPkProviderId("3");
+
+        // Then
+        assertThat(saved).isEmpty();
+
+        saved = repository.findByPkProviderId("4");
+
+        assertThat(saved).isNotEmpty();
     }
 
     private CardRangeEntity entity(String providerId, long rangeStart, long rangeEnd) {
