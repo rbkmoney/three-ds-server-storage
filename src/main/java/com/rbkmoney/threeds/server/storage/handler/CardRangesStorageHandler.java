@@ -1,17 +1,19 @@
 package com.rbkmoney.threeds.server.storage.handler;
 
-import com.rbkmoney.damsel.three_ds_server_storage.Action;
-import com.rbkmoney.damsel.three_ds_server_storage.CardRange;
-import com.rbkmoney.damsel.three_ds_server_storage.CardRangesStorageSrv;
+import com.rbkmoney.damsel.three_ds_server_storage.*;
 import com.rbkmoney.threeds.server.storage.service.CardRangeService;
+import com.rbkmoney.threeds.server.storage.service.LastUpdatedService;
+import com.rbkmoney.threeds.server.storage.service.SerialNumberService;
+import com.rbkmoney.threeds.server.storage.utils.CardRangeWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static com.rbkmoney.threeds.server.storage.utils.CardRangeWrapper.toStringHideCardRange;
+import static java.util.function.Predicate.not;
 
 @Slf4j
 @Service
@@ -19,43 +21,87 @@ import java.util.function.Predicate;
 public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
     private final CardRangeService cardRangeService;
+    private final SerialNumberService serialNumberService;
+    private final LastUpdatedService lastUpdatedService;
 
     @Override
-    public boolean isStorageEmpty(String providerId) throws TException {
+    public void updateCardRanges(UpdateCardRangesRequest request) {
+        String providerId = request.getProviderId();
+        String serialNumber = request.getSerialNumber();
+        List<CardRange> tCardRanges = request.getCardRanges();
+        boolean isNeedStorageClear = request.isIsNeedStorageClear();
+
+        log.info(
+                "Update preparation flow data, providerId={}, serialNumber={}, cardRanges={}",
+                providerId,
+                serialNumber,
+                tCardRanges.size());
+
+        if (isNeedStorageClear) {
+            cardRangeService.deleteAll(providerId);
+            lastUpdatedService.delete(providerId);
+            serialNumberService.delete(providerId);
+        } else {
+            cardRangeService.deleteAll(providerId, tCardRanges);
+        }
+
+        cardRangeService.saveAll(providerId, tCardRanges);
+        lastUpdatedService.save(providerId);
+        serialNumberService.save(providerId, serialNumber);
+
+        log.info(
+                "Finish update preparation flow data, providerId={}, serialNumber={}, cardRanges={}",
+                providerId,
+                serialNumber,
+                tCardRanges.size());
+    }
+
+    @Override
+    public boolean isStorageEmpty(String providerId) {
         return cardRangeService.doesNotExistsCardRanges(providerId);
     }
 
     @Override
-    public boolean isValidCardRanges(String providerId, List<CardRange> cardRanges) throws TException {
-        Optional<CardRange> cardRange = cardRanges.stream()
-                .filter(Predicate.not(cr -> isValidCardRange(providerId, cr)))
-                .findFirst();
+    public boolean isValidCardRanges(String providerId, List<CardRange> cardRanges) {
+        if (isStorageEmpty(providerId)) {
+            return true;
+        }
 
-        if (cardRange.isPresent()) {
-            log.warn("Exist invalid CardRange, check finished, cardRange={}", cardRange.toString());
+        List<CardRange> invalidCardRanges = cardRanges.stream()
+                .filter(not(cr -> isValidCardRange(providerId, cr)))
+                .collect(Collectors.toList());
+
+        if (!invalidCardRanges.isEmpty()) {
+            String hideCardRanges = invalidCardRanges.stream()
+                    .map(CardRangeWrapper::toStringHideCardRange)
+                    .collect(Collectors.joining(", ", "[", "]"));
+
+            log.warn("CardRanges is invalid, providerId={}, cardRanges={}", providerId, hideCardRanges);
         } else {
             log.info("CardRanges is valid, providerId={}, cardRanges={}", providerId, cardRanges.size());
         }
 
-        return cardRange.isEmpty();
+        return invalidCardRanges.isEmpty();
     }
 
     @Override
-    public boolean isInCardRange(String providerId, long accountNumber) throws TException {
-        return cardRangeService.isInCardRange(providerId, accountNumber);
+    public String getDirectoryServerProviderId(long accountNumber) throws DirectoryServerProviderIDNotFound {
+        return cardRangeService.getProviderId(accountNumber)
+                .orElseThrow(DirectoryServerProviderIDNotFound::new);
     }
 
     private boolean isValidCardRange(String providerId, CardRange cardRange) {
-        long startRange = cardRange.getRangeStart();
-        long endRange = cardRange.getRangeEnd();
         Action action = cardRange.getAction();
 
         if (action.isSetAddCardRange()) {
-            return cardRangeService.existsFreeSpaceForNewCardRange(providerId, startRange, endRange);
+            if (cardRangeService.existsCardRange(providerId, cardRange)) {
+                return true;
+            }
+            return cardRangeService.existsFreeSpaceForNewCardRange(providerId, cardRange);
         } else if (action.isSetModifyCardRange() || action.isSetDeleteCardRange()) {
-            return cardRangeService.existsCardRange(providerId, startRange, endRange);
+            return cardRangeService.existsCardRange(providerId, cardRange);
         }
 
-        throw new IllegalArgumentException(String.format("Action Indicator missing in Card Range Data, cardRange=%s", cardRange));
+        throw new IllegalArgumentException(String.format("Action Indicator missing in CardRange, cardRange=%s", toStringHideCardRange(cardRange)));
     }
 }

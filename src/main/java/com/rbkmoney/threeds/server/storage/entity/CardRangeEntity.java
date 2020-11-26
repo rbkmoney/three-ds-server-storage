@@ -21,4 +21,6 @@ public class CardRangeEntity implements Serializable {
     @EmbeddedId
     private CardRangePk pk;
 
+    private String threeDsMethodUrl;
+
 }

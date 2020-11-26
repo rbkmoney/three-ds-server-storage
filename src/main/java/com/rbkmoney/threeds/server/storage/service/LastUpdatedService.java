@@ -19,10 +19,17 @@ public class LastUpdatedService {
 
     @Transactional
     public void save(String providerId) {
-        log.debug("Trying to save LastUpdated, providerId={}", providerId);
+        log.debug("Trying to save LastUpdatedEntity, providerId={}", providerId);
 
         LastUpdatedEntity lastUpdatedEntity = lastUpdatedMapper.toEntity(providerId);
 
         lastUpdatedRepository.save(lastUpdatedEntity);
+    }
+
+    @Transactional
+    public void delete(String providerId) {
+        log.info("Trying to delete LastUpdatedEntity, providerId={}", providerId);
+
+        lastUpdatedRepository.deleteById(providerId);
     }
 }

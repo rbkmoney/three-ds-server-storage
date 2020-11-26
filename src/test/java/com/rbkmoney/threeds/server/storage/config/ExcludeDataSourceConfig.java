@@ -16,6 +16,6 @@ import org.springframework.boot.test.context.TestConfiguration;
                 FlywayAutoConfiguration.class,
         }
 )
-public class EnableAutoConfigurationTestConfig {
+public class ExcludeDataSourceConfig {
 
 }

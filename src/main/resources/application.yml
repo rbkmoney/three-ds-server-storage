@@ -47,3 +47,6 @@ client:
     url: http://localhost:8080/sdk
     readTimeout: 1860000
     connectTimeout: 5000
+
+asyncConfig:
+  enabled: true

@@ -1,6 +1,8 @@
 package com.rbkmoney.threeds.server.storage.service;
 
-import com.rbkmoney.threeds.server.domain.root.rbkmoney.RBKMoneyPreparationResponse;
+import com.rbkmoney.threeds.server.domain.error.ErrorCode;
+import com.rbkmoney.threeds.server.domain.root.Message;
+import com.rbkmoney.threeds.server.domain.root.emvco.ErroWrapper;
 import com.rbkmoney.threeds.server.storage.client.ThreeDsClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,16 +14,23 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class PreparationFlowService {
 
-    private final SerialNumService serialNumService;
+    private final SerialNumberService serialNumberService;
     private final ThreeDsClient threeDsClient;
-    private final PreparationFlowDataUpdater dataUpdater;
 
     @Async
     public void init(String providerId, String messageVersion) {
-        String serialNum = serialNumService.get(providerId).orElse(null);
+        String serialNumber = serialNumberService.get(providerId).orElse(null);
 
-        RBKMoneyPreparationResponse rbkMoneyPreparationResponse = threeDsClient.preparationFlow(providerId, messageVersion, serialNum);
+        Message message = threeDsClient.preparationFlow(providerId, messageVersion, serialNumber);
 
-        dataUpdater.update(rbkMoneyPreparationResponse);
+        if (message instanceof ErroWrapper) {
+            ErroWrapper erroWrapper = (ErroWrapper) message;
+            ErrorCode errorCode = erroWrapper.getErrorCode().getValue();
+            if (errorCode != ErrorCode.SENT_MESSAGE_LIMIT_EXCEEDED_103) {
+                // при любой ошибке формируем требование к следующему запросу на полное обновление диапазонов
+                // при этом временно остается текущая схема с карточными диапазонами, уже записанными в базу
+                serialNumberService.delete(providerId);
+            }
+        }
     }
 }

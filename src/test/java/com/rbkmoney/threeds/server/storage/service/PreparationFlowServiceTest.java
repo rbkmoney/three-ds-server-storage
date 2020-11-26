@@ -1,90 +1,127 @@
 package com.rbkmoney.threeds.server.storage.service;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.google.common.base.Charsets;
+import com.rbkmoney.threeds.server.domain.error.ErrorCode;
+import com.rbkmoney.threeds.server.domain.root.emvco.ErroWrapper;
+import com.rbkmoney.threeds.server.domain.root.rbkmoney.RBKMoneyPreparationResponse;
+import com.rbkmoney.threeds.server.serialization.EnumWrapper;
+import com.rbkmoney.threeds.server.storage.client.ThreeDsClient;
 import com.rbkmoney.threeds.server.storage.config.AbstractDaoConfig;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
-import com.rbkmoney.threeds.server.storage.entity.SerialNumEntity;
+import com.rbkmoney.threeds.server.storage.entity.CardRangePk;
+import com.rbkmoney.threeds.server.storage.entity.SerialNumberEntity;
+import com.rbkmoney.threeds.server.storage.mapper.LastUpdatedMapper;
 import com.rbkmoney.threeds.server.storage.repository.CardRangeRepository;
-import com.rbkmoney.threeds.server.storage.repository.SerialNumRepository;
-import io.micrometer.core.instrument.util.IOUtils;
-import org.awaitility.Awaitility;
-import org.junit.ClassRule;
+import com.rbkmoney.threeds.server.storage.repository.LastUpdatedRepository;
+import com.rbkmoney.threeds.server.storage.repository.SerialNumberRepository;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@TestPropertySource(properties = {
-        "client.three-ds-server.url=http://127.0.0.1:8089/"
-})
 public class PreparationFlowServiceTest extends AbstractDaoConfig {
 
-    @ClassRule
-    public static WireMockRule wireMockRule = new WireMockRule(8089);
+    private static final String PROVIDER_ID = "TRAP";
+    private static final String MESSAGE_VERSION = "2.1.0";
+    private static final String SERIAL_NUMBER = "trap";
 
     @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
-    private SerialNumRepository serialNumRepository;
+    private PreparationFlowService preparationFlowService;
 
     @Autowired
     private CardRangeRepository cardRangeRepository;
 
     @Autowired
-    private PreparationFlowService preparationFlowService;
+    private SerialNumberRepository serialNumberRepository;
+
+    @Autowired
+    private LastUpdatedRepository lastUpdatedRepository;
+
+    @Autowired
+    private LastUpdatedMapper lastUpdatedMapper;
+
+    @MockBean
+    private ThreeDsClient threeDsClient;
+
+    @Before
+    public void setUp() {
+        cardRangeRepository.save(entity(PROVIDER_ID, 1L, 9L));
+        lastUpdatedRepository.save(lastUpdatedMapper.toEntity(PROVIDER_ID));
+        serialNumberRepository.save(entity());
+
+        assertThat(cardRangeRepository.findAll()).hasSize(1);
+        assertThat(lastUpdatedRepository.findAll()).hasSize(1);
+        assertThat(serialNumberRepository.findAll()).hasSize(1);
+    }
 
     @Test
-    public void shouldSaveUpdatedSerialNumAndCardRanges() throws IOException {
-        // Given
-        stubForOkResponse();
+    public void shouldSkipValidResponseTest() {
+        when(threeDsClient.preparationFlow(anyString(), anyString(), anyString())).thenReturn(
+                RBKMoneyPreparationResponse.builder()
+                        .providerId("1")
+                        .build());
 
-        Awaitility.setDefaultPollDelay(Duration.ofSeconds(3));
-        Awaitility.setDefaultTimeout(Duration.ofMinutes(1L));
+        preparationFlowService.init(PROVIDER_ID, MESSAGE_VERSION);
 
-        ExecutorService executorService = Executors.newFixedThreadPool(1);
-        Future<?> Future = executorService.submit(() -> preparationFlowService.init("1", "2.1.0"));
-
-        await().until(Future::isDone);
-
-        Optional<SerialNumEntity> serialNum = serialNumRepository.findByProviderId("1");
-        assertTrue(serialNum.isPresent());
-        assertThat(serialNum.get().getSerialNum()).isEqualTo("20190411083623719000");
-
-        List<CardRangeEntity> cardRanges = cardRangeRepository.findByPkProviderId("1");
-        assertThat(cardRanges).hasSize(20);
+        assertThat(cardRangeRepository.findAll()).hasSize(1);
+        assertThat(lastUpdatedRepository.findAll()).hasSize(1);
+        assertThat(serialNumberRepository.findAll()).hasSize(1);
     }
 
-    private void stubForOkResponse() throws IOException {
-        stubFor(post(urlEqualTo("/"))
-                .willReturn(aResponse()
-                        .withStatus(HttpStatus.OK.value())
-                        .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                        .withBody(readStringFromFile("preparation-flow-response-1.json"))));
+    @Test
+    public void shouldSkipErrorButValidResponseTest() {
+        when(threeDsClient.preparationFlow(anyString(), anyString(), anyString())).thenReturn(
+                ErroWrapper.builder()
+                        .errorCode(errorCode(ErrorCode.SENT_MESSAGE_LIMIT_EXCEEDED_103))
+                        .build());
+
+        preparationFlowService.init(PROVIDER_ID, MESSAGE_VERSION);
+
+        assertThat(cardRangeRepository.findAll()).hasSize(1);
+        assertThat(lastUpdatedRepository.findAll()).hasSize(1);
+        assertThat(serialNumberRepository.findAll()).hasSize(1);
     }
 
-    private String readStringFromFile(String fileName) throws IOException {
-        return IOUtils.toString(
-                resourceLoader.getResource("classpath:__files/" + fileName).getInputStream(),
-                Charsets.UTF_8);
+    @Test
+    public void shouldDeleteEntitiesAtErrorResponseTest() {
+        when(threeDsClient.preparationFlow(any(), any(), any()))
+                .thenReturn(
+                        ErroWrapper.builder()
+                                .errorCode(errorCode(ErrorCode.TRANSACTION_TIMED_OUT_402))
+                                .build());
+
+        preparationFlowService.init(PROVIDER_ID, MESSAGE_VERSION);
+
+        assertThat(cardRangeRepository.findAll()).hasSize(1);
+        assertThat(lastUpdatedRepository.findAll()).hasSize(1);
+        assertThat(serialNumberRepository.findAll()).hasSize(0);
+    }
+
+    private CardRangeEntity entity(String providerId, long rangeStart, long rangeEnd) {
+        return CardRangeEntity.builder()
+                .pk(CardRangePk.builder()
+                        .providerId(providerId)
+                        .rangeStart(rangeStart)
+                        .rangeEnd(rangeEnd)
+                        .build())
+                .threeDsMethodUrl("url")
+                .build();
+    }
+
+    private SerialNumberEntity entity() {
+        return SerialNumberEntity.builder()
+                .providerId(PROVIDER_ID)
+                .serialNumber(SERIAL_NUMBER)
+                .build();
+    }
+
+    private EnumWrapper<ErrorCode> errorCode(ErrorCode errorCode) {
+        EnumWrapper<ErrorCode> errorCodeEnumWrapper = new EnumWrapper<>();
+        errorCodeEnumWrapper.setValue(errorCode);
+        return errorCodeEnumWrapper;
     }
 }

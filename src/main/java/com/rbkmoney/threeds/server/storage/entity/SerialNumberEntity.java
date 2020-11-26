@@ -16,14 +16,14 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "serial_num")
-public class SerialNumEntity implements Serializable {
+@Table(name = "serial_number")
+public class SerialNumberEntity implements Serializable {
 
     @Id
     @Column(name = "provider_id")
     private String providerId;
 
-    @Column(name = "serial_num")
-    private String serialNum;
+    @Column(name = "serial_number")
+    private String serialNumber;
 
 }

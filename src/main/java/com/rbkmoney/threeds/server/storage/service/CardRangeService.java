@@ -1,21 +1,24 @@
 package com.rbkmoney.threeds.server.storage.service;
 
-import com.rbkmoney.threeds.server.domain.cardrange.ActionInd;
-import com.rbkmoney.threeds.server.domain.rbkmoney.cardrange.RBKMoneyCardRange;
+import com.rbkmoney.damsel.three_ds_server_storage.Action;
+import com.rbkmoney.damsel.three_ds_server_storage.CardRange;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 import com.rbkmoney.threeds.server.storage.entity.CardRangePk;
 import com.rbkmoney.threeds.server.storage.mapper.CardRangeMapper;
 import com.rbkmoney.threeds.server.storage.repository.CardRangeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
-import static com.rbkmoney.threeds.server.domain.cardrange.ActionInd.*;
+import static com.rbkmoney.threeds.server.storage.utils.CardRangeWrapper.toStringHideCardRange;
+import static com.rbkmoney.threeds.server.utils.AccountNumberUtils.hideAccountNumber;
 
 @Service
 @RequiredArgsConstructor
@@ -26,53 +29,62 @@ public class CardRangeService {
     private final CardRangeMapper cardRangeMapper;
 
     @Transactional
-    public void saveAll(String providerId, List<RBKMoneyCardRange> domainCardRanges) {
-        log.info("Trying to save CardRanges, providerId={}, allCardRanges={}", providerId, domainCardRanges.size());
-
+    public void saveAll(String providerId, List<CardRange> tCardRanges) {
         List<CardRangeEntity> savedCardRanges = new ArrayList<>();
 
-        Iterator<RBKMoneyCardRange> iterator = domainCardRanges.iterator();
+        Iterator<CardRange> iterator = tCardRanges.iterator();
 
         while (iterator.hasNext()) {
-            RBKMoneyCardRange domainCardRange = iterator.next();
-            ActionInd actionInd = domainCardRange.getActionInd();
+            CardRange tCardRange = iterator.next();
+            Action action = tCardRange.getAction();
 
-            var entity = cardRangeMapper.fromJsonToEntity(domainCardRange, providerId);
-
-            if (actionInd == ADD_CARD_RANGE_TO_CACHE
-                    || actionInd == MODIFY_CARD_RANGE_DATA) {
+            if (action.isSetAddCardRange() || action.isSetModifyCardRange()) {
+                var entity = cardRangeMapper.fromThriftToEntity(tCardRange, providerId);
                 savedCardRanges.add(entity);
                 iterator.remove();
             }
         }
 
-        cardRangeRepository.saveAll(savedCardRanges);
-
-        log.info("CardRanges has been saved, providerId={}, savedCardRanges={}", providerId, savedCardRanges.size());
+        if (!savedCardRanges.isEmpty()) {
+            log.info("Trying to save CardRanges, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
+            cardRangeRepository.saveAll(savedCardRanges);
+            log.info("CardRanges has been saved, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
+        } else {
+            log.info("Nothing to save, CardRanges is empty, providerId={}", providerId);
+        }
     }
 
     @Transactional
-    public void deleteAll(String providerId, List<RBKMoneyCardRange> domainCardRanges) {
-        log.info("Trying to delete CardRanges, providerId={}, allCardRanges={}", providerId, domainCardRanges.size());
+    public void deleteAll(String providerId, List<CardRange> tCardRanges) {
+        List<CardRangeEntity> deletedCardRanges = new ArrayList<>();
 
-        List<CardRangeEntity> deletedEntityCardRanges = new ArrayList<>();
-
-        Iterator<RBKMoneyCardRange> iterator = domainCardRanges.iterator();
+        Iterator<CardRange> iterator = tCardRanges.iterator();
 
         while (iterator.hasNext()) {
-            RBKMoneyCardRange domainCardRange = iterator.next();
-            ActionInd actionInd = domainCardRange.getActionInd();
+            CardRange tCardRange = iterator.next();
+            Action action = tCardRange.getAction();
 
-            var entity = cardRangeMapper.fromJsonToEntity(domainCardRange, providerId);
-            if (actionInd == DELETE_CARD_RANGE_FROM_CACHE) {
-                deletedEntityCardRanges.add(entity);
+            if (action.isSetDeleteCardRange()) {
+                var entity = cardRangeMapper.fromThriftToEntity(tCardRange, providerId);
+                deletedCardRanges.add(entity);
                 iterator.remove();
             }
         }
 
-        cardRangeRepository.deleteAll(deletedEntityCardRanges);
+        if (!deletedCardRanges.isEmpty()) {
+            log.info("Trying to delete CardRanges, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
+            cardRangeRepository.deleteAll(deletedCardRanges);
+            log.info("CardRanges has been deleted, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
+        } else {
+            log.info("Nothing to delete, CardRanges is empty, providerId={}", providerId);
+        }
+    }
 
-        log.info("CardRanges has been deleted, providerId={}, deletedCardRanges={}", providerId, deletedEntityCardRanges.size());
+    @Transactional
+    public void deleteAll(String providerId) {
+        log.info("Trying to delete all CardRanges, providerId={}", providerId);
+
+        cardRangeRepository.deleteAllByPkProviderId(providerId);
     }
 
     public boolean doesNotExistsCardRanges(String providerId) {
@@ -83,43 +95,56 @@ public class CardRangeService {
         return doesNotExistsCardRanges;
     }
 
-    public boolean existsFreeSpaceForNewCardRange(String providerId, long startRange, long endRange) {
+    public boolean existsFreeSpaceForNewCardRange(String providerId, CardRange cardRange) {
+        long startRange = cardRange.getRangeStart();
+        long endRange = cardRange.getRangeEnd();
+
         boolean existsFreeSpaceForNewCardRange = cardRangeRepository.existsFreeSpaceForNewCardRange(providerId, startRange, endRange);
 
         log.debug(
-                "existsFreeSpaceForNewCardRange={}, providerId={}, startRange={}, endRange={}",
+                "existsFreeSpaceForNewCardRange={}, providerId={}, cardRange={}",
                 existsFreeSpaceForNewCardRange,
                 providerId,
-                startRange,
-                endRange);
+                toStringHideCardRange(cardRange));
 
         return existsFreeSpaceForNewCardRange;
     }
 
-    public boolean existsCardRange(String providerId, long startRange, long endRange) {
-        CardRangePk cardRangePk = CardRangePk.builder()
-                .providerId(providerId)
-                .rangeStart(startRange)
-                .rangeEnd(endRange)
-                .build();
+    public boolean existsCardRange(String providerId, CardRange cardRange) {
+        CardRangePk cardRangePk = cardRangePk(providerId, cardRange.getRangeStart(), cardRange.getRangeEnd());
 
         boolean existsCardRange = cardRangeRepository.existsCardRangeEntityByPkEquals(cardRangePk);
 
         log.debug(
-                "existsCardRange={}, providerId={}, startRange={}, endRange={}",
+                "existsCardRange={}, providerId={}, cardRange={}",
                 existsCardRange,
                 providerId,
-                startRange,
-                endRange);
+                toStringHideCardRange(cardRange));
 
         return existsCardRange;
     }
 
-    public boolean isInCardRange(String providerId, long accountNumber) {
-        boolean isInCardRange = cardRangeRepository.existsCardRangeEntityByPkProviderIdIsAndPkRangeStartLessThanEqualAndPkRangeEndGreaterThanEqual(providerId, accountNumber, accountNumber);
+    public Optional<String> getProviderId(long accountNumber) {
+        log.info("Trying to getProviderId, accountNumber={}", hideAccountNumber(accountNumber));
 
-        log.info("isInCardRange={}, providerId={}, accountNumber={}", isInCardRange, providerId, accountNumber);
+        Optional<String> providerId = cardRangeRepository.getProviderIds(accountNumber, limitOne())
+                .stream()
+                .findFirst();
 
-        return isInCardRange;
+        log.info("getProviderId={}, accountNumber={}", providerId.toString(), hideAccountNumber(accountNumber));
+
+        return providerId;
+    }
+
+    private CardRangePk cardRangePk(String providerId, long startRange, long endRange) {
+        return CardRangePk.builder()
+                .providerId(providerId)
+                .rangeStart(startRange)
+                .rangeEnd(endRange)
+                .build();
+    }
+
+    private PageRequest limitOne() {
+        return PageRequest.of(0, 1);
     }
 }
