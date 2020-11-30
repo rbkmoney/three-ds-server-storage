@@ -2,8 +2,6 @@ package com.rbkmoney.threeds.server.storage.handler;
 
 import com.rbkmoney.damsel.three_ds_server_storage.*;
 import com.rbkmoney.threeds.server.storage.service.CardRangeService;
-import com.rbkmoney.threeds.server.storage.service.LastUpdatedService;
-import com.rbkmoney.threeds.server.storage.service.SerialNumberService;
 import com.rbkmoney.threeds.server.storage.utils.CardRangeWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,37 +19,10 @@ import static java.util.function.Predicate.not;
 public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
     private final CardRangeService cardRangeService;
-    private final SerialNumberService serialNumberService;
-    private final LastUpdatedService lastUpdatedService;
 
     @Override
     public void updateCardRanges(UpdateCardRangesRequest request) {
-        String providerId = request.getProviderId();
-        String serialNumber = request.getSerialNumber();
-        List<CardRange> tCardRanges = request.getCardRanges();
-        boolean isNeedStorageClear = request.isIsNeedStorageClear();
-
-        log.info(
-                "Update preparation flow data, providerId={}, serialNumber={}, cardRanges={}",
-                providerId,
-                serialNumber,
-                tCardRanges.size());
-
-        if (isNeedStorageClear) {
-            cardRangeService.deleteAll(providerId);
-        } else {
-            cardRangeService.deleteAll(providerId, tCardRanges);
-        }
-
-        cardRangeService.saveAll(providerId, tCardRanges);
-        lastUpdatedService.save(providerId);
-        serialNumberService.save(providerId, serialNumber);
-
-        log.info(
-                "Finish update preparation flow data, providerId={}, serialNumber={}, cardRanges={}",
-                providerId,
-                serialNumber,
-                tCardRanges.size());
+        cardRangeService.update(request);
     }
 
     @Override
