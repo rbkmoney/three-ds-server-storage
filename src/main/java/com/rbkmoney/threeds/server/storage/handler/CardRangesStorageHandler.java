@@ -39,8 +39,6 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
         if (isNeedStorageClear) {
             cardRangeService.deleteAll(providerId);
-            lastUpdatedService.delete(providerId);
-            serialNumberService.delete(providerId);
         } else {
             cardRangeService.deleteAll(providerId, tCardRanges);
         }
