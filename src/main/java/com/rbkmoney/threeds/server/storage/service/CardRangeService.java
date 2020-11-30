@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -60,65 +59,6 @@ public class CardRangeService {
                 providerId,
                 serialNumber,
                 tCardRanges.size());
-    }
-
-    @Transactional
-    public void saveAll(String providerId, List<CardRange> tCardRanges) {
-        List<CardRangeEntity> savedCardRanges = new ArrayList<>();
-
-        Iterator<CardRange> iterator = tCardRanges.iterator();
-
-        while (iterator.hasNext()) {
-            CardRange tCardRange = iterator.next();
-            Action action = tCardRange.getAction();
-
-            if (action.isSetAddCardRange() || action.isSetModifyCardRange()) {
-                var entity = cardRangeMapper.fromThriftToEntity(tCardRange, providerId);
-                savedCardRanges.add(entity);
-                iterator.remove();
-            }
-        }
-
-        if (!savedCardRanges.isEmpty()) {
-            log.info("Trying to save CardRanges, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
-            cardRangeRepository.saveAll(savedCardRanges);
-            log.info("CardRanges has been saved, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
-        } else {
-            log.info("Nothing to save, CardRanges is empty, providerId={}", providerId);
-        }
-    }
-
-    @Transactional
-    public void deleteAll(String providerId, List<CardRange> tCardRanges) {
-        List<CardRangeEntity> deletedCardRanges = new ArrayList<>();
-
-        Iterator<CardRange> iterator = tCardRanges.iterator();
-
-        while (iterator.hasNext()) {
-            CardRange tCardRange = iterator.next();
-            Action action = tCardRange.getAction();
-
-            if (action.isSetDeleteCardRange()) {
-                var entity = cardRangeMapper.fromThriftToEntity(tCardRange, providerId);
-                deletedCardRanges.add(entity);
-                iterator.remove();
-            }
-        }
-
-        if (!deletedCardRanges.isEmpty()) {
-            log.info("Trying to delete CardRanges, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
-            cardRangeRepository.deleteAll(deletedCardRanges);
-            log.info("CardRanges has been deleted, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
-        } else {
-            log.info("Nothing to delete, CardRanges is empty, providerId={}", providerId);
-        }
-    }
-
-    @Transactional
-    public void deleteAll(String providerId) {
-        log.info("Trying to delete all CardRanges, providerId={}", providerId);
-
-        cardRangeRepository.deleteAllByPkProviderId(providerId);
     }
 
     public boolean doesNotExistsCardRanges(String providerId) {
@@ -168,6 +108,62 @@ public class CardRangeService {
         log.info("getProviderId={}, accountNumber={}", providerId.toString(), hideAccountNumber(accountNumber));
 
         return providerId;
+    }
+
+    void saveAll(String providerId, List<CardRange> tCardRanges) {
+        List<CardRangeEntity> savedCardRanges = new ArrayList<>();
+
+        Iterator<CardRange> iterator = tCardRanges.iterator();
+
+        while (iterator.hasNext()) {
+            CardRange tCardRange = iterator.next();
+            Action action = tCardRange.getAction();
+
+            if (action.isSetAddCardRange() || action.isSetModifyCardRange()) {
+                var entity = cardRangeMapper.fromThriftToEntity(tCardRange, providerId);
+                savedCardRanges.add(entity);
+                iterator.remove();
+            }
+        }
+
+        if (!savedCardRanges.isEmpty()) {
+            log.info("Trying to save CardRanges, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
+            cardRangeRepository.saveAll(savedCardRanges);
+            log.info("CardRanges has been saved, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
+        } else {
+            log.info("Nothing to save, CardRanges is empty, providerId={}", providerId);
+        }
+    }
+
+    void deleteAll(String providerId, List<CardRange> tCardRanges) {
+        List<CardRangeEntity> deletedCardRanges = new ArrayList<>();
+
+        Iterator<CardRange> iterator = tCardRanges.iterator();
+
+        while (iterator.hasNext()) {
+            CardRange tCardRange = iterator.next();
+            Action action = tCardRange.getAction();
+
+            if (action.isSetDeleteCardRange()) {
+                var entity = cardRangeMapper.fromThriftToEntity(tCardRange, providerId);
+                deletedCardRanges.add(entity);
+                iterator.remove();
+            }
+        }
+
+        if (!deletedCardRanges.isEmpty()) {
+            log.info("Trying to delete CardRanges, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
+            cardRangeRepository.deleteAll(deletedCardRanges);
+            log.info("CardRanges has been deleted, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
+        } else {
+            log.info("Nothing to delete, CardRanges is empty, providerId={}", providerId);
+        }
+    }
+
+    private void deleteAll(String providerId) {
+        log.info("Trying to delete all CardRanges, providerId={}", providerId);
+
+        cardRangeRepository.deleteAllByPkProviderId(providerId);
     }
 
     private CardRangePk cardRangePk(String providerId, long startRange, long endRange) {
