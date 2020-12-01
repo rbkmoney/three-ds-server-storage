@@ -18,6 +18,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -61,9 +63,10 @@ public class PreparationFlowServiceTest extends AbstractDaoConfig {
     @Test
     public void shouldSkipValidResponseTest() {
         when(threeDsClient.preparationFlow(anyString(), anyString(), anyString())).thenReturn(
-                RBKMoneyPreparationResponse.builder()
-                        .providerId("1")
-                        .build());
+                Optional.of(
+                        RBKMoneyPreparationResponse.builder()
+                                .providerId("1")
+                                .build()));
 
         preparationFlowService.init(PROVIDER_ID, MESSAGE_VERSION);
 
@@ -75,9 +78,10 @@ public class PreparationFlowServiceTest extends AbstractDaoConfig {
     @Test
     public void shouldSkipErrorButValidResponseTest() {
         when(threeDsClient.preparationFlow(anyString(), anyString(), anyString())).thenReturn(
-                ErroWrapper.builder()
-                        .errorCode(errorCode(ErrorCode.SENT_MESSAGE_LIMIT_EXCEEDED_103))
-                        .build());
+                Optional.of(
+                        ErroWrapper.builder()
+                                .errorCode(errorCode(ErrorCode.SENT_MESSAGE_LIMIT_EXCEEDED_103))
+                                .build()));
 
         preparationFlowService.init(PROVIDER_ID, MESSAGE_VERSION);
 
@@ -90,9 +94,10 @@ public class PreparationFlowServiceTest extends AbstractDaoConfig {
     public void shouldDeleteEntitiesAtErrorResponseTest() {
         when(threeDsClient.preparationFlow(any(), any(), any()))
                 .thenReturn(
-                        ErroWrapper.builder()
-                                .errorCode(errorCode(ErrorCode.TRANSACTION_TIMED_OUT_402))
-                                .build());
+                        Optional.of(
+                                ErroWrapper.builder()
+                                        .errorCode(errorCode(ErrorCode.TRANSACTION_TIMED_OUT_402))
+                                        .build()));
 
         preparationFlowService.init(PROVIDER_ID, MESSAGE_VERSION);
 

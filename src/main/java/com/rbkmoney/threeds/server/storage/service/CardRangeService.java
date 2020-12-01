@@ -39,8 +39,9 @@ public class CardRangeService {
         boolean isNeedStorageClear = request.isIsNeedStorageClear();
 
         log.info(
-                "Update preparation flow data, providerId={}, serialNumber={}, cardRanges={}",
+                "[async] Update CardRanges, providerId={}, isNeedStorageClear={}, serialNumber={}, cardRanges={}",
                 providerId,
+                isNeedStorageClear,
                 serialNumber,
                 tCardRanges.size());
 
@@ -55,8 +56,9 @@ public class CardRangeService {
         serialNumberService.save(providerId, serialNumber);
 
         log.info(
-                "Finish update preparation flow data, providerId={}, serialNumber={}, cardRanges={}",
+                "[async] Finish update CardRanges, providerId={}, isNeedStorageClear={}, serialNumber={}, cardRanges={}",
                 providerId,
+                isNeedStorageClear,
                 serialNumber,
                 tCardRanges.size());
     }
@@ -127,11 +129,13 @@ public class CardRangeService {
         }
 
         if (!savedCardRanges.isEmpty()) {
-            log.info("Trying to save CardRanges, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
+            log.info("[async] Trying to save CardRanges, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
+
             cardRangeRepository.saveAll(savedCardRanges);
-            log.info("CardRanges has been saved, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
+
+            log.info("[async] CardRanges has been saved, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
         } else {
-            log.info("Nothing to save, CardRanges is empty, providerId={}", providerId);
+            log.info("[async] Nothing to save, CardRanges is empty, providerId={}", providerId);
         }
     }
 
@@ -152,16 +156,18 @@ public class CardRangeService {
         }
 
         if (!deletedCardRanges.isEmpty()) {
-            log.info("Trying to delete CardRanges, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
+            log.info("[async] Trying to delete CardRanges, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
+
             cardRangeRepository.deleteAll(deletedCardRanges);
-            log.info("CardRanges has been deleted, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
+
+            log.info("[async] CardRanges has been deleted, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
         } else {
-            log.info("Nothing to delete, CardRanges is empty, providerId={}", providerId);
+            log.info("[async] Nothing to delete, CardRanges is empty, providerId={}", providerId);
         }
     }
 
     private void deleteAll(String providerId) {
-        log.info("Trying to delete all CardRanges, providerId={}", providerId);
+        log.info("[async] Trying to delete all CardRanges by providerId, providerId={}", providerId);
 
         cardRangeRepository.deleteAllByPkProviderId(providerId);
     }

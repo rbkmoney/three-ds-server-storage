@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -17,19 +15,11 @@ public class LastUpdatedService {
     private final LastUpdatedRepository lastUpdatedRepository;
     private final LastUpdatedMapper lastUpdatedMapper;
 
-    @Transactional
     public void save(String providerId) {
-        log.debug("Trying to save LastUpdatedEntity, providerId={}", providerId);
+        log.info("Trying to save LastUpdatedEntity, providerId={}", providerId);
 
         LastUpdatedEntity lastUpdatedEntity = lastUpdatedMapper.toEntity(providerId);
 
         lastUpdatedRepository.save(lastUpdatedEntity);
-    }
-
-    @Transactional
-    public void delete(String providerId) {
-        log.info("Trying to delete LastUpdatedEntity, providerId={}", providerId);
-
-        lastUpdatedRepository.deleteById(providerId);
     }
 }
