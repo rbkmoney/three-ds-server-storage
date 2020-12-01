@@ -39,24 +39,24 @@ public class CardRangeService {
         boolean isNeedStorageClear = request.isIsNeedStorageClear();
 
         log.info(
-                "[async] Update CardRanges, providerId={}, isNeedStorageClear={}, serialNumber={}, cardRanges={}",
+                "Update CardRanges, providerId={}, isNeedStorageClear={}, serialNumber={}, cardRanges={}",
                 providerId,
                 isNeedStorageClear,
                 serialNumber,
                 tCardRanges.size());
 
         if (isNeedStorageClear) {
-            deleteAll(providerId);
+            deleteByProviderId(providerId);
         } else {
-            deleteAll(providerId, tCardRanges);
+            deleteCardRangeEntities(providerId, tCardRanges);
         }
 
-        saveAll(providerId, tCardRanges);
+        saveCardRangeEntities(providerId, tCardRanges);
         lastUpdatedService.save(providerId);
         serialNumberService.save(providerId, serialNumber);
 
         log.info(
-                "[async] Finish update CardRanges, providerId={}, isNeedStorageClear={}, serialNumber={}, cardRanges={}",
+                "Finish update CardRanges, providerId={}, isNeedStorageClear={}, serialNumber={}, cardRanges={}",
                 providerId,
                 isNeedStorageClear,
                 serialNumber,
@@ -66,7 +66,7 @@ public class CardRangeService {
     public boolean doesNotExistsCardRanges(String providerId) {
         boolean doesNotExistsCardRanges = !cardRangeRepository.existsCardRangeEntitiesByPkProviderIdIs(providerId);
 
-        log.info("doesNotExistsCardRanges={}, providerId={}", doesNotExistsCardRanges, providerId);
+        log.info("Storage is empty = {}, providerId={}", doesNotExistsCardRanges, providerId);
 
         return doesNotExistsCardRanges;
     }
@@ -78,7 +78,7 @@ public class CardRangeService {
         boolean existsFreeSpaceForNewCardRange = cardRangeRepository.existsFreeSpaceForNewCardRange(providerId, startRange, endRange);
 
         log.debug(
-                "existsFreeSpaceForNewCardRange={}, providerId={}, cardRange={}",
+                "CardRange can be added = {}, providerId={}, cardRange={}",
                 existsFreeSpaceForNewCardRange,
                 providerId,
                 toStringHideCardRange(cardRange));
@@ -92,7 +92,7 @@ public class CardRangeService {
         boolean existsCardRange = cardRangeRepository.existsCardRangeEntityByPkEquals(cardRangePk);
 
         log.debug(
-                "existsCardRange={}, providerId={}, cardRange={}",
+                "CardRange can be modified or deleted = {}, providerId={}, cardRange={}",
                 existsCardRange,
                 providerId,
                 toStringHideCardRange(cardRange));
@@ -101,18 +101,16 @@ public class CardRangeService {
     }
 
     public Optional<String> getProviderId(long accountNumber) {
-        log.info("Trying to getProviderId, accountNumber={}", hideAccountNumber(accountNumber));
-
         Optional<String> providerId = cardRangeRepository.getProviderIds(accountNumber, limitOne())
                 .stream()
                 .findFirst();
 
-        log.info("getProviderId={}, accountNumber={}", providerId.toString(), hideAccountNumber(accountNumber));
+        log.info("ProviderId by accountNumber has been found, providerId={}, accountNumber={}", providerId.toString(), hideAccountNumber(accountNumber));
 
         return providerId;
     }
 
-    void saveAll(String providerId, List<CardRange> tCardRanges) {
+    void saveCardRangeEntities(String providerId, List<CardRange> tCardRanges) {
         List<CardRangeEntity> savedCardRanges = new ArrayList<>();
 
         Iterator<CardRange> iterator = tCardRanges.iterator();
@@ -129,17 +127,17 @@ public class CardRangeService {
         }
 
         if (!savedCardRanges.isEmpty()) {
-            log.info("[async] Trying to save CardRanges, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
+            log.info("Trying to save CardRanges, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
 
             cardRangeRepository.saveAll(savedCardRanges);
 
-            log.info("[async] CardRanges has been saved, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
+            log.info("CardRanges has been saved, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
         } else {
-            log.info("[async] Nothing to save, CardRanges is empty, providerId={}", providerId);
+            log.info("Nothing to save, CardRanges is empty, providerId={}", providerId);
         }
     }
 
-    void deleteAll(String providerId, List<CardRange> tCardRanges) {
+    void deleteCardRangeEntities(String providerId, List<CardRange> tCardRanges) {
         List<CardRangeEntity> deletedCardRanges = new ArrayList<>();
 
         Iterator<CardRange> iterator = tCardRanges.iterator();
@@ -156,18 +154,18 @@ public class CardRangeService {
         }
 
         if (!deletedCardRanges.isEmpty()) {
-            log.info("[async] Trying to delete CardRanges, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
+            log.info("Trying to delete CardRanges, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
 
             cardRangeRepository.deleteAll(deletedCardRanges);
 
-            log.info("[async] CardRanges has been deleted, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
+            log.info("CardRanges has been deleted, providerId={}, cardRanges={}", providerId, deletedCardRanges.size());
         } else {
-            log.info("[async] Nothing to delete, CardRanges is empty, providerId={}", providerId);
+            log.info("Nothing to delete, CardRanges is empty, providerId={}", providerId);
         }
     }
 
-    private void deleteAll(String providerId) {
-        log.info("[async] Trying to delete all CardRanges by providerId, providerId={}", providerId);
+    private void deleteByProviderId(String providerId) {
+        log.info("Trying to delete CardRanges by providerId, providerId={}", providerId);
 
         cardRangeRepository.deleteAllByPkProviderId(providerId);
     }

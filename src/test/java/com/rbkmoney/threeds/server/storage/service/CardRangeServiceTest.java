@@ -108,7 +108,7 @@ public class CardRangeServiceTest extends AbstractDaoConfig {
                 addCardRange(7, 8)
         ));
 
-        cardRangeService.saveAll("1", rbkMoneyCardRanges);
+        cardRangeService.saveCardRangeEntities("1", rbkMoneyCardRanges);
 
         assertEquals(0, rbkMoneyCardRanges.size());
         assertEquals(2, cardRangeRepository.findByPkProviderId("1").size());
@@ -122,12 +122,12 @@ public class CardRangeServiceTest extends AbstractDaoConfig {
                 deleteCardRange(7, 8)
         ));
 
-        cardRangeService.saveAll("1", rbkMoneyCardRanges);
+        cardRangeService.saveCardRangeEntities("1", rbkMoneyCardRanges);
 
         assertEquals(2, rbkMoneyCardRanges.size());
         assertEquals(4, cardRangeRepository.findByPkProviderId("1").size());
 
-        cardRangeService.deleteAll("1", rbkMoneyCardRanges);
+        cardRangeService.deleteCardRangeEntities("1", rbkMoneyCardRanges);
 
         assertEquals(0, rbkMoneyCardRanges.size());
         assertEquals(2, cardRangeRepository.findByPkProviderId("1").size());
