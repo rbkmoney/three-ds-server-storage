@@ -8,26 +8,33 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class ThreeDsClient {
+
+    private static final String REQUEST_LOG = "-> Req [{}]: providerId={}, request={}";
+    private static final String RESPONSE_LOG = "<- Res [{}]: providerId={}, response={}";
 
     @Value("${client.three-ds-server.url}")
     private String url;
 
     private final RestTemplate restTemplate;
 
-    public Message preparationFlow(String providerId, String messageVersion, String serialNumber) {
-        RBKMoneyPreparationRequest rbkMoneyPreparationRequest = rbkMoneyPreparationRequest(providerId, messageVersion, serialNumber);
+    public Optional<Message> preparationFlow(String providerId, String messageVersion, String serialNumber) {
+        String endpoint = "POST " + url;
 
-        log.info("Request to 'three-ds-server' service: request={}", rbkMoneyPreparationRequest.toString());
+        var request = rbkMoneyPreparationRequest(providerId, messageVersion, serialNumber);
 
-        Message message = restTemplate.postForObject(url, rbkMoneyPreparationRequest, Message.class);
+        log.info(REQUEST_LOG, endpoint, providerId, request.toString());
 
-        log.info("Response from 'three-ds-server' service: response={}", message.toString());
+        var response = Optional.ofNullable(restTemplate.postForObject(url, request, Message.class));
 
-        return message;
+        log.info(RESPONSE_LOG, endpoint, providerId, response.toString());
+
+        return response;
     }
 
     private RBKMoneyPreparationRequest rbkMoneyPreparationRequest(String providerId, String messageVersion, String serialNumber) {
