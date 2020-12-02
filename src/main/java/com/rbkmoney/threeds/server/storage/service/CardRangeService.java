@@ -39,7 +39,8 @@ public class CardRangeService {
         boolean isNeedStorageClear = request.isIsNeedStorageClear();
 
         log.info(
-                "Update CardRanges, providerId={}, isNeedStorageClear={}, serialNumber={}, cardRanges={}",
+                "Update CardRanges (during the current 'Initialization PreparationFlow'), " +
+                        "providerId={}, isNeedStorageClear={}, serialNumber={}, cardRanges={}",
                 providerId,
                 isNeedStorageClear,
                 serialNumber,
@@ -56,7 +57,8 @@ public class CardRangeService {
         serialNumberService.save(providerId, serialNumber);
 
         log.info(
-                "Finish update CardRanges, providerId={}, isNeedStorageClear={}, serialNumber={}, cardRanges={}",
+                "Finish update CardRanges (during the current 'Initialization PreparationFlow'), " +
+                        "providerId={}, isNeedStorageClear={}, serialNumber={}, cardRanges={}",
                 providerId,
                 isNeedStorageClear,
                 serialNumber,
@@ -66,7 +68,7 @@ public class CardRangeService {
     public boolean doesNotExistsCardRanges(String providerId) {
         boolean doesNotExistsCardRanges = !cardRangeRepository.existsCardRangeEntitiesByPkProviderIdIs(providerId);
 
-        log.info("Storage is empty = {}, providerId={}", doesNotExistsCardRanges, providerId);
+        log.info("Storage is empty = '{}', providerId={}", doesNotExistsCardRanges, providerId);
 
         return doesNotExistsCardRanges;
     }
@@ -78,7 +80,7 @@ public class CardRangeService {
         boolean existsFreeSpaceForNewCardRange = cardRangeRepository.existsFreeSpaceForNewCardRange(providerId, startRange, endRange);
 
         log.debug(
-                "CardRange can be added = {}, providerId={}, cardRange={}",
+                "CardRange can be added = '{}', providerId={}, cardRange={}",
                 existsFreeSpaceForNewCardRange,
                 providerId,
                 toStringHideCardRange(cardRange));
@@ -92,7 +94,7 @@ public class CardRangeService {
         boolean existsCardRange = cardRangeRepository.existsCardRangeEntityByPkEquals(cardRangePk);
 
         log.debug(
-                "CardRange can be modified or deleted = {}, providerId={}, cardRange={}",
+                "CardRange can be modified or deleted = '{}', providerId={}, cardRange={}",
                 existsCardRange,
                 providerId,
                 toStringHideCardRange(cardRange));
@@ -105,7 +107,7 @@ public class CardRangeService {
                 .stream()
                 .findFirst();
 
-        log.info("ProviderId by accountNumber has been found, providerId={}, accountNumber={}", providerId.toString(), hideAccountNumber(accountNumber));
+        log.info("ProviderId by AccountNumber has been found, providerId={}, accountNumber={}", providerId.toString(), hideAccountNumber(accountNumber));
 
         return providerId;
     }
@@ -165,7 +167,7 @@ public class CardRangeService {
     }
 
     private void deleteByProviderId(String providerId) {
-        log.info("Trying to delete CardRanges by providerId, providerId={}", providerId);
+        log.info("Trying to delete CardRanges by ProviderId, providerId={}", providerId);
 
         cardRangeRepository.deleteAllByPkProviderId(providerId);
     }
