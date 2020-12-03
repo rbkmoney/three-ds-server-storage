@@ -28,13 +28,15 @@ public class SerialNumberService {
     public Optional<String> get(String providerId) {
         log.info("Trying to get SerialNumberEntity, providerId={}", providerId);
 
-        return serialNumberRepository.findByProviderId(providerId)
+        return serialNumberRepository.findById(providerId)
                 .map(SerialNumberEntity::getSerialNumber);
     }
 
     public void delete(String providerId) {
         log.info("Trying to delete SerialNumberEntity, providerId={}", providerId);
 
-        serialNumberRepository.deleteById(providerId);
+        if (serialNumberRepository.existsById(providerId)) {
+            serialNumberRepository.deleteById(providerId);
+        }
     }
 }

@@ -42,4 +42,10 @@ public interface CardRangeRepository extends JpaRepository<CardRangeEntity, Card
             "where cr.pk.rangeEnd >= ?1 and cr.pk.rangeStart <= ?1")
     Page<String> getProviderIds(long accountNumber, Pageable pageable);
 
+    @Query("select " +
+            "cr " +
+            "from CardRangeEntity cr " +
+            "where cr.pk.rangeEnd >= ?1 and cr.pk.rangeStart <= ?1")
+    Page<CardRangeEntity> getCardRangeEntities(long accountNumber, Pageable pageable);
+
 }

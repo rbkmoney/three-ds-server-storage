@@ -37,7 +37,7 @@ public class ChallengeFlowTransactionInfoService {
     public Optional<ChallengeFlowTransactionInfo> get(String transactionId) {
         log.info("Trying to get ChallengeFlowTransactionInfo, transactionId={}", transactionId);
 
-        Optional<ChallengeFlowTransactionInfo> transactionInfo = repository.findByTransactionId(transactionId)
+        Optional<ChallengeFlowTransactionInfo> transactionInfo = repository.findById(transactionId)
                 .map(mapper::fromEntityToThrift);
 
         log.info("getChallengeFlowTransactionInfo={}, transactionId={}", transactionInfo.toString(), transactionId);
