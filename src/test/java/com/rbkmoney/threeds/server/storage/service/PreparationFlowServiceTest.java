@@ -113,6 +113,11 @@ public class PreparationFlowServiceTest extends AbstractDaoConfig {
                         .rangeStart(rangeStart)
                         .rangeEnd(rangeEnd)
                         .build())
+                .acsStartProtocolVersion("2.1.0")
+                .acsEndProtocolVersion("2.1.0")
+                .dsStartProtocolVersion("2.1.0")
+                .dsEndProtocolVersion("2.1.0")
+                .acsInformationIndicator("2.1.0")
                 .threeDsMethodUrl("url")
                 .build();
     }

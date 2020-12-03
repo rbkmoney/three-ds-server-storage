@@ -69,7 +69,7 @@ public class HandlerTest extends AbstractConfigWithoutDao {
     public void shouldReturnValidCardRangesForEmptyStorage() throws Exception {
         when(cardRangeRepository.existsCardRangeEntitiesByPkProviderIdIs(eq(PROVIDER_ID))).thenReturn(false);
 
-        boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(new CardRange(1, 2, add())));
+        boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(cardRange(add())));
 
         assertTrue(expected);
     }
@@ -78,7 +78,7 @@ public class HandlerTest extends AbstractConfigWithoutDao {
     public void shouldReturnTrueForValidAddCardRange() throws Exception {
         when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong())).thenReturn(true);
 
-        boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(new CardRange(1, 2, add())));
+        boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(cardRange(add())));
 
         assertTrue(expected);
     }
@@ -87,7 +87,7 @@ public class HandlerTest extends AbstractConfigWithoutDao {
     public void shouldReturnFalseForInvalidAddCardRange() throws Exception {
         when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong())).thenReturn(false);
 
-        boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(new CardRange(1, 2, add())));
+        boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(cardRange(add())));
 
         assertFalse(expected);
     }
@@ -96,7 +96,7 @@ public class HandlerTest extends AbstractConfigWithoutDao {
     public void shouldReturnTrueForValidModifyCardRange() throws Exception {
         when(cardRangeRepository.existsCardRangeEntityByPkEquals(any())).thenReturn(true);
 
-        boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(new CardRange(1, 2, modify())));
+        boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(cardRange(modify())));
 
         assertTrue(expected);
     }
@@ -105,7 +105,8 @@ public class HandlerTest extends AbstractConfigWithoutDao {
     public void shouldReturnFalseForInvalidModifyCardRange() throws Exception {
         when(cardRangeRepository.existsCardRangeEntityByPkEquals(any())).thenReturn(false);
 
-        boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(new CardRange(1, 2, modify())));
+        Action modify = modify();
+        boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(cardRange(modify)));
 
         assertFalse(expected);
     }
@@ -172,7 +173,7 @@ public class HandlerTest extends AbstractConfigWithoutDao {
     public void shouldThrowNotFoundWhenNullTransactionTest() throws Exception {
         String transactionId = UUID.randomUUID().toString();
 
-        when(challengeFlowTransactionInfoRepository.findByTransactionId(transactionId)).thenReturn(Optional.empty());
+        when(challengeFlowTransactionInfoRepository.findById(transactionId)).thenReturn(Optional.empty());
 
         challengeFlowTransactionInfoStorageClient.getChallengeFlowTransactionInfo(transactionId);
     }
@@ -191,7 +192,7 @@ public class HandlerTest extends AbstractConfigWithoutDao {
                 .acsUrl("1")
                 .build();
 
-        when(challengeFlowTransactionInfoRepository.findByTransactionId(transactionId)).thenReturn(Optional.of(challengeFlowTransactionInfoEntity));
+        when(challengeFlowTransactionInfoRepository.findById(transactionId)).thenReturn(Optional.of(challengeFlowTransactionInfoEntity));
 
         ChallengeFlowTransactionInfo challengeFlowTransactionInfo = challengeFlowTransactionInfoStorageClient.getChallengeFlowTransactionInfo(transactionId);
         assertEquals(transactionId, challengeFlowTransactionInfo.getTransactionId());
@@ -209,11 +210,15 @@ public class HandlerTest extends AbstractConfigWithoutDao {
         return Action.delete_card_range(new Delete());
     }
 
+    private CardRange cardRange(Action action) {
+        return new CardRange(1, 2, action, "2.1.0", "2.1.0", "2.1.0", "2.1.0");
+    }
+
     private List<CardRange> cardRanges() {
         return List.of(
-                new CardRange(1, 2, add()),
-                new CardRange(3, 4, modify()),
-                new CardRange(5, 6, delete()));
+                cardRange(add()),
+                new CardRange(3, 4, modify(), "2.1.0", "2.1.0", "2.1.0", "2.1.0"),
+                new CardRange(5, 6, delete(), "2.1.0", "2.1.0", "2.1.0", "2.1.0"));
     }
 
     private CardRangePk cardRangePk(int rangeStart, int rangeEnd) {

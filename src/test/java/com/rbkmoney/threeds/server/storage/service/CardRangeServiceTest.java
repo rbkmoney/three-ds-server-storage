@@ -153,6 +153,26 @@ public class CardRangeServiceTest extends AbstractDaoConfig {
         assertTrue(cardRangeService.getProviderId(12345675000L).isEmpty());
     }
 
+    @Test
+    public void getAccountNumberVersionTest() throws Exception {
+        // Given
+        CardRangeEntity first = entity("1", 12345671001L, 12345672000L);
+        CardRangeEntity second = entity("1", 12345673001L, 12345673003L);
+        CardRangeEntity third = entity("2", 12345674000L, 12345674001L);
+
+        // When
+        cardRangeRepository.saveAll(List.of(first, second, third));
+
+        assertEquals("1", cardRangeService.getAccountNumberVersion(12345671001L).get().getProviderId());
+        assertEquals("1", cardRangeService.getAccountNumberVersion(12345671002L).get().getProviderId());
+        assertEquals("1", cardRangeService.getAccountNumberVersion(12345671999L).get().getProviderId());
+        assertEquals("1", cardRangeService.getAccountNumberVersion(12345672000L).get().getProviderId());
+        assertEquals("1", cardRangeService.getAccountNumberVersion(12345673002L).get().getProviderId());
+        assertEquals("2", cardRangeService.getAccountNumberVersion(12345674000L).get().getProviderId());
+        assertTrue(cardRangeService.getAccountNumberVersion(1234567500L).isEmpty());
+        assertTrue(cardRangeService.getAccountNumberVersion(12345675000L).isEmpty());
+    }
+
     private CardRangeEntity entity(String providerId, long rangeStart, long rangeEnd) {
         return CardRangeEntity.builder()
                 .pk(CardRangePk.builder()
@@ -160,20 +180,25 @@ public class CardRangeServiceTest extends AbstractDaoConfig {
                         .rangeStart(rangeStart)
                         .rangeEnd(rangeEnd)
                         .build())
+                .acsStartProtocolVersion("2.1.0")
+                .acsEndProtocolVersion("2.1.0")
+                .dsStartProtocolVersion("2.1.0")
+                .dsEndProtocolVersion("2.1.0")
+                .acsInformationIndicator("2.1.0")
                 .threeDsMethodUrl("url")
                 .build();
     }
 
     private CardRange addCardRange(long rangeStart, long rangeEnd) {
-        return new CardRange(rangeStart, rangeEnd, add());
+        return new CardRange(rangeStart, rangeEnd, add(), "2.1.0", "2.1.0", "2.1.0", "2.1.0");
     }
 
     private CardRange modifyCardRange(long rangeStart, long rangeEnd) {
-        return new CardRange(rangeStart, rangeEnd, modify());
+        return new CardRange(rangeStart, rangeEnd, modify(), "2.1.0", "2.1.0", "2.1.0", "2.1.0");
     }
 
     private CardRange deleteCardRange(long rangeStart, long rangeEnd) {
-        return new CardRange(rangeStart, rangeEnd, delete());
+        return new CardRange(rangeStart, rangeEnd, delete(), "2.1.0", "2.1.0", "2.1.0", "2.1.0");
     }
 
     private Action add() {

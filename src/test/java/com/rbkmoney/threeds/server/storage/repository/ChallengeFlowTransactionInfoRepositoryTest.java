@@ -47,7 +47,7 @@ public class ChallengeFlowTransactionInfoRepositoryTest extends AbstractDaoConfi
 
         // When
         repository.save(entity);
-        Optional<ChallengeFlowTransactionInfoEntity> saved = repository.findByTransactionId("1");
+        Optional<ChallengeFlowTransactionInfoEntity> saved = repository.findById("1");
 
         // Then
         assertTrue(saved.isPresent());
