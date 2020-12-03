@@ -19,7 +19,7 @@ public class PreparationFlowService {
 
     @Async
     public void init(String providerId, String messageVersion) {
-        log.info("Start initialization PreparationFlow, providerId={}", providerId);
+        log.info("Start 'Initialization PreparationFlow', providerId={}", providerId);
 
         String serialNumber = serialNumberService.get(providerId).orElse(null);
 
@@ -31,27 +31,27 @@ public class PreparationFlowService {
             log.warn("Response message is null, providerId={}", providerId);
         }
 
-        log.info("Finish initialization PreparationFlow, providerId={}", providerId);
+        log.info("Finish 'Initialization PreparationFlow', providerId={}", providerId);
     }
 
     private void handleResponse(String providerId, Message message) {
         if (message instanceof ErroWrapper) {
             ErrorCode errorCode = ((ErroWrapper) message).getErrorCode().getValue();
-            if (errorCode != ErrorCode.SENT_MESSAGE_LIMIT_EXCEEDED_103) {
-                // при любой ошибке формируем требование к следующему запросу на полное обновление диапазонов
-                // при этом временно остается текущая схема с карточными диапазонами, уже записанными в базу
 
-                log.warn("Response message contains error - in next init request service will cleanse all tables and load fresh CardRanges, " +
-                        "SerialNumber should be deleted" +
+            // при любой ошибке формируем требование к следующему запросу на полное обновление диапазонов
+            // при этом временно остается текущая схема с карточными диапазонами, уже записанными в базу
+            if (errorCode != ErrorCode.SENT_MESSAGE_LIMIT_EXCEEDED_103) {
+                log.warn("Response message contains ERROR - SerialNumber should be deleted, " +
+                        "in next 'Initialization PreparationFlow' service will cleanse all tables and load fresh CardRanges, " +
                         "providerId={}, response={}", providerId, message.toString());
 
                 serialNumberService.delete(providerId);
             } else {
-                log.info("Response message contains error - nothing to do, because request can be sent once an hour, " +
+                log.info("Response message contains ERROR — SKIP IT, BECAUSE request can be sent once an hour, " +
                         "providerId={}, response={}", providerId, message.toString());
             }
         } else {
-            log.info("Response message is ok, nothing to do, providerId={}, response={}", providerId, message.toString());
+            log.info("Response message is OK — SKIP IT, BECAUSE all is well providerId={}, response={}", providerId, message.toString());
         }
     }
 }
