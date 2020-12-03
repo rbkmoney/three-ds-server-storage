@@ -13,5 +13,11 @@ public class HideCardRange {
     private String startRange;
     private String endRange;
     private Action action;
+    private String acsStartProtocolVersion;
+    private String acsEndProtocolVersion;
+    private String dsStartProtocolVersion;
+    private String dsEndProtocolVersion;
+    private String acsInformationIndicator;
+    private String threeDsMethodUrl;
 
 }

@@ -36,7 +36,7 @@ public class SerialNumberRepositoryTest extends AbstractDaoConfig {
 
         // When
         repository.save(entity);
-        Optional<SerialNumberEntity> saved = repository.findByProviderId("1");
+        Optional<SerialNumberEntity> saved = repository.findById("1");
 
         // Then
         assertTrue(saved.isPresent());
@@ -65,7 +65,7 @@ public class SerialNumberRepositoryTest extends AbstractDaoConfig {
         repository.save(first);
         repository.save(second);
         repository.save(third);
-        Optional<SerialNumberEntity> saved = repository.findByProviderId("2");
+        Optional<SerialNumberEntity> saved = repository.findById("2");
 
         // Then
         assertTrue(saved.isPresent());
@@ -98,12 +98,12 @@ public class SerialNumberRepositoryTest extends AbstractDaoConfig {
         // When
         repository.deleteById("3");
 
-        Optional<SerialNumberEntity> saved = repository.findByProviderId("3");
+        Optional<SerialNumberEntity> saved = repository.findById("3");
 
         // Then
         assertThat(saved).isEmpty();
 
-        saved = repository.findByProviderId("2");
+        saved = repository.findById("2");
 
         // Then
         assertThat(saved).isNotEmpty();

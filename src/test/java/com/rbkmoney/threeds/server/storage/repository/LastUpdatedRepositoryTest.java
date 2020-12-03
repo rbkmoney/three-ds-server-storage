@@ -35,7 +35,7 @@ public class LastUpdatedRepositoryTest extends AbstractDaoConfig {
 
         repository.save(entity);
 
-        Optional<LastUpdatedEntity> saved = repository.findByProviderId("visa");
+        Optional<LastUpdatedEntity> saved = repository.findById("visa");
 
         assertTrue(saved.isPresent());
         assertThat(saved.get()).isEqualTo(entity);
@@ -44,7 +44,7 @@ public class LastUpdatedRepositoryTest extends AbstractDaoConfig {
     @Test
     public void shouldKeepOnlyTheNewestTest() throws Exception {
         repository.save(mapper.toEntity("visa"));
-        Optional<LastUpdatedEntity> firstSaved = repository.findByProviderId("visa");
+        Optional<LastUpdatedEntity> firstSaved = repository.findById("visa");
 
         assertTrue(firstSaved.isPresent());
 
@@ -54,7 +54,7 @@ public class LastUpdatedRepositoryTest extends AbstractDaoConfig {
 
         LastUpdatedEntity third = mapper.toEntity("visa");
         repository.save(third);
-        Optional<LastUpdatedEntity> lastSaved = repository.findByProviderId("visa");
+        Optional<LastUpdatedEntity> lastSaved = repository.findById("visa");
 
         assertTrue(lastSaved.isPresent());
         assertThat(lastSaved.get()).isEqualTo(third);
@@ -70,12 +70,12 @@ public class LastUpdatedRepositoryTest extends AbstractDaoConfig {
         // When
         repository.deleteById("2");
 
-        Optional<LastUpdatedEntity> saved = repository.findByProviderId("2");
+        Optional<LastUpdatedEntity> saved = repository.findById("2");
 
         // Then
         assertThat(saved).isEmpty();
 
-        saved = repository.findByProviderId("1");
+        saved = repository.findById("1");
 
         assertThat(saved).isNotEmpty();
     }

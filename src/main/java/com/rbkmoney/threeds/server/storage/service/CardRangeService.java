@@ -2,6 +2,7 @@ package com.rbkmoney.threeds.server.storage.service;
 
 import com.rbkmoney.damsel.three_ds_server_storage.Action;
 import com.rbkmoney.damsel.three_ds_server_storage.CardRange;
+import com.rbkmoney.damsel.three_ds_server_storage.ThreeDsSecondVersion;
 import com.rbkmoney.damsel.three_ds_server_storage.UpdateCardRangesRequest;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 import com.rbkmoney.threeds.server.storage.entity.CardRangePk;
@@ -33,10 +34,10 @@ public class CardRangeService {
 
     @Async
     public void update(UpdateCardRangesRequest request) {
-        String providerId = request.getProviderId();
-        String serialNumber = request.getSerialNumber();
-        List<CardRange> tCardRanges = request.getCardRanges();
-        boolean isNeedStorageClear = request.isIsNeedStorageClear();
+        var providerId = request.getProviderId();
+        var tCardRanges = request.getCardRanges();
+        var isNeedStorageClear = request.isIsNeedStorageClear();
+        var serialNumber = Optional.ofNullable(request.getSerialNumber());
 
         log.info(
                 "Update CardRanges (during the current 'Initialization PreparationFlow'), " +
@@ -54,7 +55,11 @@ public class CardRangeService {
 
         saveCardRangeEntities(providerId, tCardRanges);
         lastUpdatedService.save(providerId);
-        serialNumberService.save(providerId, serialNumber);
+        if (serialNumber.isPresent()) {
+            serialNumberService.save(providerId, serialNumber.get());
+        } else {
+            serialNumberService.delete(providerId);
+        }
 
         log.info(
                 "Finish update CardRanges (during the current 'Initialization PreparationFlow'), " +
@@ -89,9 +94,9 @@ public class CardRangeService {
     }
 
     public boolean existsCardRange(String providerId, CardRange cardRange) {
-        CardRangePk cardRangePk = cardRangePk(providerId, cardRange.getRangeStart(), cardRange.getRangeEnd());
+        var pk = cardRangePk(providerId, cardRange.getRangeStart(), cardRange.getRangeEnd());
 
-        boolean existsCardRange = cardRangeRepository.existsCardRangeEntityByPkEquals(cardRangePk);
+        boolean existsCardRange = cardRangeRepository.existsCardRangeEntityByPkEquals(pk);
 
         log.debug(
                 "CardRange can be modified or deleted = '{}', providerId={}, cardRange={}",
@@ -103,13 +108,27 @@ public class CardRangeService {
     }
 
     public Optional<String> getProviderId(long accountNumber) {
-        Optional<String> providerId = cardRangeRepository.getProviderIds(accountNumber, limitOne())
+        var providerId = cardRangeRepository.getProviderIds(accountNumber, limitOne())
                 .stream()
                 .findFirst();
 
         log.info("ProviderId by AccountNumber has been found, providerId={}, accountNumber={}", providerId.toString(), hideAccountNumber(accountNumber));
 
         return providerId;
+    }
+
+    public Optional<ThreeDsSecondVersion> getAccountNumberVersion(long accountNumber) {
+        return cardRangeRepository.getCardRangeEntities(accountNumber, limitOne())
+                .stream()
+                .findFirst()
+                .map(
+                        cardRange -> {
+                            log.info("CardRange by accountNumber has been found, cardRange={}, accountNumber={}",
+                                    toStringHideCardRange(cardRange), hideAccountNumber(accountNumber));
+
+                            return Optional.of(cardRangeMapper.fromEntityToThreeDsSecondVersion(cardRange));
+                        })
+                .orElseGet(Optional::empty);
     }
 
     void saveCardRangeEntities(String providerId, List<CardRange> tCardRanges) {
@@ -169,7 +188,9 @@ public class CardRangeService {
     private void deleteByProviderId(String providerId) {
         log.info("Trying to delete CardRanges by ProviderId, providerId={}", providerId);
 
-        cardRangeRepository.deleteAllByPkProviderId(providerId);
+        if (!doesNotExistsCardRanges(providerId)) {
+            cardRangeRepository.deleteAllByPkProviderId(providerId);
+        }
     }
 
     private CardRangePk cardRangePk(String providerId, long startRange, long endRange) {

@@ -59,6 +59,13 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
                 .orElseThrow(DirectoryServerProviderIDNotFound::new);
     }
 
+    @Override
+    public AccountNumberVersion getAccountNumberVersion(long accountNumber) {
+        return cardRangeService.getAccountNumberVersion(accountNumber)
+                .map(AccountNumberVersion::three_ds_second_version)
+                .orElseGet(() -> AccountNumberVersion.unsupported_version(new UnsupportedVersion()));
+    }
+
     private boolean isValidCardRange(String providerId, CardRange cardRange) {
         Action action = cardRange.getAction();
 
