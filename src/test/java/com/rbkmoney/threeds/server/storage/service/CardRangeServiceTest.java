@@ -1,6 +1,6 @@
 package com.rbkmoney.threeds.server.storage.service;
 
-import com.rbkmoney.damsel.three_ds_server_storage.*;
+import com.rbkmoney.damsel.threeds.server.storage.*;
 import com.rbkmoney.threeds.server.storage.config.AbstractDaoConfig;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 import com.rbkmoney.threeds.server.storage.entity.CardRangePk;
@@ -163,14 +163,14 @@ public class CardRangeServiceTest extends AbstractDaoConfig {
         // When
         cardRangeRepository.saveAll(List.of(first, second, third));
 
-        assertEquals("1", cardRangeService.getAccountNumberVersion(12345671001L).get().getProviderId());
-        assertEquals("1", cardRangeService.getAccountNumberVersion(12345671002L).get().getProviderId());
-        assertEquals("1", cardRangeService.getAccountNumberVersion(12345671999L).get().getProviderId());
-        assertEquals("1", cardRangeService.getAccountNumberVersion(12345672000L).get().getProviderId());
-        assertEquals("1", cardRangeService.getAccountNumberVersion(12345673002L).get().getProviderId());
-        assertEquals("2", cardRangeService.getAccountNumberVersion(12345674000L).get().getProviderId());
-        assertTrue(cardRangeService.getAccountNumberVersion(1234567500L).isEmpty());
-        assertTrue(cardRangeService.getAccountNumberVersion(12345675000L).isEmpty());
+        assertEquals("1", cardRangeService.getThreeDsSecondVersion(12345671001L).get().getProviderId());
+        assertEquals("1", cardRangeService.getThreeDsSecondVersion(12345671002L).get().getProviderId());
+        assertEquals("1", cardRangeService.getThreeDsSecondVersion(12345671999L).get().getProviderId());
+        assertEquals("1", cardRangeService.getThreeDsSecondVersion(12345672000L).get().getProviderId());
+        assertEquals("1", cardRangeService.getThreeDsSecondVersion(12345673002L).get().getProviderId());
+        assertEquals("2", cardRangeService.getThreeDsSecondVersion(12345674000L).get().getProviderId());
+        assertTrue(cardRangeService.getThreeDsSecondVersion(1234567500L).isEmpty());
+        assertTrue(cardRangeService.getThreeDsSecondVersion(12345675000L).isEmpty());
     }
 
     private CardRangeEntity entity(String providerId, long rangeStart, long rangeEnd) {

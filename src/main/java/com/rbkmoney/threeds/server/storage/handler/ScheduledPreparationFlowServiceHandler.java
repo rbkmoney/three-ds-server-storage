@@ -1,8 +1,8 @@
 package com.rbkmoney.threeds.server.storage.handler;
 
 import com.rbkmoney.damsel.schedule.*;
-import com.rbkmoney.damsel.three_ds_server_storage.InitRBKMoneyPreparationFlowRequest;
-import com.rbkmoney.damsel.three_ds_server_storage.PreparationFlowInitializerSrv;
+import com.rbkmoney.damsel.threeds.server.storage.InitRBKMoneyPreparationFlowRequest;
+import com.rbkmoney.damsel.threeds.server.storage.PreparationFlowInitializerSrv;
 import com.rbkmoney.threeds.server.storage.deserializer.ThriftDeserializer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,7 @@
 package com.rbkmoney.threeds.server.storage.mapper;
 
-import com.rbkmoney.damsel.three_ds_server_storage.CardRange;
-import com.rbkmoney.damsel.three_ds_server_storage.ThreeDsSecondVersion;
+import com.rbkmoney.damsel.threeds.server.storage.CardRange;
+import com.rbkmoney.damsel.threeds.server.storage.ThreeDsSecondVersion;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 import com.rbkmoney.threeds.server.storage.entity.CardRangePk;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class CardRangeMapper {
                 .build();
     }
 
-    public ThreeDsSecondVersion fromEntityToThreeDsSecondVersion(CardRangeEntity cardRangeEntity) {
+    public ThreeDsSecondVersion fromEntityToThrift(CardRangeEntity cardRangeEntity) {
         return new ThreeDsSecondVersion()
                 .setProviderId(cardRangeEntity.getPk().getProviderId())
                 .setAcsStart(cardRangeEntity.getAcsStartProtocolVersion())

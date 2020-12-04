@@ -1,6 +1,6 @@
 package com.rbkmoney.threeds.server.storage.utils;
 
-import com.rbkmoney.damsel.three_ds_server_storage.Action;
+import com.rbkmoney.damsel.threeds.server.storage.Action;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;

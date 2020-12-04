@@ -1,6 +1,6 @@
 package com.rbkmoney.threeds.server.storage.handler;
 
-import com.rbkmoney.damsel.three_ds_server_storage.*;
+import com.rbkmoney.damsel.threeds.server.storage.*;
 import com.rbkmoney.threeds.server.storage.service.CardRangeService;
 import com.rbkmoney.threeds.server.storage.utils.CardRangeWrapper;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +61,7 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
     @Override
     public AccountNumberVersion getAccountNumberVersion(long accountNumber) {
-        return cardRangeService.getAccountNumberVersion(accountNumber)
+        return cardRangeService.getThreeDsSecondVersion(accountNumber)
                 .map(AccountNumberVersion::three_ds_second_version)
                 .orElseGet(() -> AccountNumberVersion.unsupported_version(new UnsupportedVersion()));
     }

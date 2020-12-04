@@ -1,9 +1,9 @@
 package com.rbkmoney.threeds.server.storage.service;
 
-import com.rbkmoney.damsel.three_ds_server_storage.Action;
-import com.rbkmoney.damsel.three_ds_server_storage.CardRange;
-import com.rbkmoney.damsel.three_ds_server_storage.ThreeDsSecondVersion;
-import com.rbkmoney.damsel.three_ds_server_storage.UpdateCardRangesRequest;
+import com.rbkmoney.damsel.threeds.server.storage.Action;
+import com.rbkmoney.damsel.threeds.server.storage.CardRange;
+import com.rbkmoney.damsel.threeds.server.storage.ThreeDsSecondVersion;
+import com.rbkmoney.damsel.threeds.server.storage.UpdateCardRangesRequest;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 import com.rbkmoney.threeds.server.storage.entity.CardRangePk;
 import com.rbkmoney.threeds.server.storage.mapper.CardRangeMapper;
@@ -117,16 +117,16 @@ public class CardRangeService {
         return providerId;
     }
 
-    public Optional<ThreeDsSecondVersion> getAccountNumberVersion(long accountNumber) {
+    public Optional<ThreeDsSecondVersion> getThreeDsSecondVersion(long accountNumber) {
         return cardRangeRepository.getCardRangeEntities(accountNumber, limitOne())
                 .stream()
                 .findFirst()
                 .map(
                         cardRange -> {
-                            log.info("CardRange by accountNumber has been found, cardRange={}, accountNumber={}",
+                            log.info("CardRange by AccountNumber has been found, cardRange={}, accountNumber={}",
                                     toStringHideCardRange(cardRange), hideAccountNumber(accountNumber));
 
-                            return Optional.of(cardRangeMapper.fromEntityToThreeDsSecondVersion(cardRange));
+                            return Optional.of(cardRangeMapper.fromEntityToThrift(cardRange));
                         })
                 .orElseGet(Optional::empty);
     }

@@ -1,8 +1,8 @@
 package com.rbkmoney.threeds.server.storage.handler;
 
-import com.rbkmoney.damsel.three_ds_server_storage.ChallengeFlowTransactionInfo;
-import com.rbkmoney.damsel.three_ds_server_storage.ChallengeFlowTransactionInfoNotFound;
-import com.rbkmoney.damsel.three_ds_server_storage.ChallengeFlowTransactionInfoStorageSrv;
+import com.rbkmoney.damsel.threeds.server.storage.ChallengeFlowTransactionInfo;
+import com.rbkmoney.damsel.threeds.server.storage.ChallengeFlowTransactionInfoNotFound;
+import com.rbkmoney.damsel.threeds.server.storage.ChallengeFlowTransactionInfoStorageSrv;
 import com.rbkmoney.threeds.server.storage.service.ChallengeFlowTransactionInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,6 @@
 package com.rbkmoney.threeds.server.storage.service;
 
-import com.rbkmoney.damsel.three_ds_server_storage.ChallengeFlowTransactionInfo;
+import com.rbkmoney.damsel.threeds.server.storage.ChallengeFlowTransactionInfo;
 import com.rbkmoney.threeds.server.storage.entity.ChallengeFlowTransactionInfoEntity;
 import com.rbkmoney.threeds.server.storage.mapper.ChallengeFlowTransactionInfoMapper;
 import com.rbkmoney.threeds.server.storage.repository.ChallengeFlowTransactionInfoRepository;
