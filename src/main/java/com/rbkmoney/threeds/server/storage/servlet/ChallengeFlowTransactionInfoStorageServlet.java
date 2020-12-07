@@ -1,6 +1,6 @@
 package com.rbkmoney.threeds.server.storage.servlet;
 
-import com.rbkmoney.damsel.three_ds_server_storage.ChallengeFlowTransactionInfoStorageSrv;
+import com.rbkmoney.damsel.threeds.server.storage.ChallengeFlowTransactionInfoStorageSrv;
 import com.rbkmoney.threeds.server.storage.handler.ChallengeFlowTransactionInfoStorageHandler;
 import com.rbkmoney.woody.thrift.impl.http.THServiceBuilder;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.rbkmoney.threeds.server.storage.handler;
 
-import com.rbkmoney.damsel.three_ds_server_storage.*;
+import com.rbkmoney.damsel.threeds.server.storage.*;
 import com.rbkmoney.threeds.server.storage.config.AbstractConfigWithoutDao;
 import com.rbkmoney.threeds.server.storage.entity.CardRangePk;
 import com.rbkmoney.threeds.server.storage.entity.ChallengeFlowTransactionInfoEntity;

@@ -1,6 +1,6 @@
 package com.rbkmoney.threeds.server.storage.servlet;
 
-import com.rbkmoney.damsel.three_ds_server_storage.PreparationFlowInitializerSrv;
+import com.rbkmoney.damsel.threeds.server.storage.PreparationFlowInitializerSrv;
 import com.rbkmoney.threeds.server.storage.handler.PreparationFlowServiceHandler;
 import com.rbkmoney.woody.thrift.impl.http.THServiceBuilder;
 import lombok.RequiredArgsConstructor;

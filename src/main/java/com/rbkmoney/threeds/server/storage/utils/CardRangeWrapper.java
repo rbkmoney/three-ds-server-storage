@@ -1,6 +1,6 @@
 package com.rbkmoney.threeds.server.storage.utils;
 
-import com.rbkmoney.damsel.three_ds_server_storage.CardRange;
+import com.rbkmoney.damsel.threeds.server.storage.CardRange;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 
 import java.net.MalformedURLException;
