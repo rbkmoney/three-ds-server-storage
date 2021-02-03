@@ -53,4 +53,26 @@ public class ChallengeFlowTransactionInfoRepositoryTest extends AbstractDaoConfi
         assertTrue(saved.isPresent());
         assertThat(saved.get()).isEqualTo(entity);
     }
+
+    @Test
+    public void shouldSaveAndGetChallengeFlowTransactionInfoWithNoAcsDecConInd() {
+        // Given
+        ChallengeFlowTransactionInfoEntity entity = ChallengeFlowTransactionInfoEntity.builder()
+                .transactionId("2")
+                .deviceChannel("device")
+                .decoupledAuthMaxTime(LocalDateTime.now())
+                .acsDecConInd(null)
+                .providerId("1")
+                .messageVersion("2.1.0")
+                .acsUrl("1")
+                .build();
+
+        // When
+        repository.save(entity);
+        Optional<ChallengeFlowTransactionInfoEntity> saved = repository.findById("2");
+
+        // Then
+        assertTrue(saved.isPresent());
+        assertThat(saved.get()).isEqualTo(entity);
+    }
 }
