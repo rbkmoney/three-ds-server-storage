@@ -42,8 +42,8 @@ public class PreparationFlowService {
             // при этом временно остается текущая схема с карточными диапазонами, уже записанными в базу
             if (errorCode != ErrorCode.SENT_MESSAGE_LIMIT_EXCEEDED_103) {
                 log.warn("Response message contains ERROR - SerialNumber should be deleted, " +
-                        "in next 'Initialization PreparationFlow' service will cleanse all tables and load fresh CardRanges, " +
-                        "providerId={}, response={}", providerId, message.toString());
+                        "in next 'Initialization PreparationFlow' service will cleanse all tables " +
+                        "and load fresh CardRanges, providerId={}, response={}", providerId, message.toString());
 
                 serialNumberService.delete(providerId);
             } else {
@@ -51,7 +51,9 @@ public class PreparationFlowService {
                         "providerId={}, response={}", providerId, message.toString());
             }
         } else {
-            log.info("Response message is OK — SKIP IT, BECAUSE all is well providerId={}, response={}", providerId, message.toString());
+            log.info("Response message is OK — SKIP IT, BECAUSE all is well providerId={}, response={}",
+                    providerId,
+                    message.toString());
         }
     }
 }

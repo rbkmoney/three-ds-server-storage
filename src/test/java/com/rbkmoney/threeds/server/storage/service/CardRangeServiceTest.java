@@ -1,6 +1,10 @@
 package com.rbkmoney.threeds.server.storage.service;
 
-import com.rbkmoney.damsel.threeds.server.storage.*;
+import com.rbkmoney.damsel.threeds.server.storage.Action;
+import com.rbkmoney.damsel.threeds.server.storage.Add;
+import com.rbkmoney.damsel.threeds.server.storage.CardRange;
+import com.rbkmoney.damsel.threeds.server.storage.Delete;
+import com.rbkmoney.damsel.threeds.server.storage.Modify;
 import com.rbkmoney.threeds.server.storage.config.AbstractDaoConfig;
 import com.rbkmoney.threeds.server.storage.entity.CardRangeEntity;
 import com.rbkmoney.threeds.server.storage.entity.CardRangePk;
@@ -12,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class CardRangeServiceTest extends AbstractDaoConfig {
 
