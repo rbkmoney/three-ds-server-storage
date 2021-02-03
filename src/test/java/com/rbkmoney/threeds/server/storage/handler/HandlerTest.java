@@ -1,6 +1,15 @@
 package com.rbkmoney.threeds.server.storage.handler;
 
-import com.rbkmoney.damsel.threeds.server.storage.*;
+import com.rbkmoney.damsel.threeds.server.storage.Action;
+import com.rbkmoney.damsel.threeds.server.storage.Add;
+import com.rbkmoney.damsel.threeds.server.storage.CardRange;
+import com.rbkmoney.damsel.threeds.server.storage.CardRangesStorageSrv;
+import com.rbkmoney.damsel.threeds.server.storage.ChallengeFlowTransactionInfo;
+import com.rbkmoney.damsel.threeds.server.storage.ChallengeFlowTransactionInfoNotFound;
+import com.rbkmoney.damsel.threeds.server.storage.ChallengeFlowTransactionInfoStorageSrv;
+import com.rbkmoney.damsel.threeds.server.storage.Delete;
+import com.rbkmoney.damsel.threeds.server.storage.DirectoryServerProviderIDNotFound;
+import com.rbkmoney.damsel.threeds.server.storage.Modify;
 import com.rbkmoney.threeds.server.storage.config.AbstractConfigWithoutDao;
 import com.rbkmoney.threeds.server.storage.entity.CardRangePk;
 import com.rbkmoney.threeds.server.storage.entity.ChallengeFlowTransactionInfoEntity;
@@ -17,8 +26,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class HandlerTest extends AbstractConfigWithoutDao {
@@ -35,11 +49,13 @@ public class HandlerTest extends AbstractConfigWithoutDao {
     @Before
     public void setUp() throws Exception {
         cardRangesStorageClient = new THSpawnClientBuilder()
-                .withAddress(new URI("http://localhost:" + port + "/three-ds-server-storage/card-ranges"))
+                .withAddress(new URI("http://localhost:" + port +
+                        "/three-ds-server-storage/card-ranges"))
                 .withNetworkTimeout(TIMEOUT)
                 .build(CardRangesStorageSrv.Iface.class);
         challengeFlowTransactionInfoStorageClient = new THSpawnClientBuilder()
-                .withAddress(new URI("http://localhost:" + port + "/three-ds-server-storage/challenge-flow-transaction-info"))
+                .withAddress(new URI("http://localhost:" + port +
+                        "/three-ds-server-storage/challenge-flow-transaction-info"))
                 .withNetworkTimeout(TIMEOUT)
                 .build(ChallengeFlowTransactionInfoStorageSrv.Iface.class);
 
@@ -76,7 +92,8 @@ public class HandlerTest extends AbstractConfigWithoutDao {
 
     @Test
     public void shouldReturnTrueForValidAddCardRange() throws Exception {
-        when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong())).thenReturn(true);
+        when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong()))
+                .thenReturn(true);
 
         boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(cardRange(add())));
 
@@ -85,7 +102,8 @@ public class HandlerTest extends AbstractConfigWithoutDao {
 
     @Test
     public void shouldReturnFalseForInvalidAddCardRange() throws Exception {
-        when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong())).thenReturn(false);
+        when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong()))
+                .thenReturn(false);
 
         boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, List.of(cardRange(add())));
 
@@ -113,7 +131,8 @@ public class HandlerTest extends AbstractConfigWithoutDao {
 
     @Test
     public void shouldReturnTrueForValidCardRanges() throws Exception {
-        when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong())).thenReturn(true);
+        when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong()))
+                .thenReturn(true);
         when(cardRangeRepository.existsCardRangeEntityByPkEquals(any())).thenReturn(true);
 
         boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, cardRanges());
@@ -123,7 +142,8 @@ public class HandlerTest extends AbstractConfigWithoutDao {
 
     @Test
     public void shouldReturnFalseForInvalidAddInCardRanges() throws Exception {
-        when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong())).thenReturn(false);
+        when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong()))
+                .thenReturn(false);
 
         boolean expected = cardRangesStorageClient.isValidCardRanges(PROVIDER_ID, cardRanges());
 
@@ -132,7 +152,8 @@ public class HandlerTest extends AbstractConfigWithoutDao {
 
     @Test
     public void shouldReturnFalseForInvalidModifyInCardRanges() throws Exception {
-        when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong())).thenReturn(true);
+        when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong()))
+                .thenReturn(true);
         when(cardRangeRepository.existsCardRangeEntityByPkEquals(eq(cardRangePk(3, 4)))).thenReturn(false);
         when(cardRangeRepository.existsCardRangeEntityByPkEquals(eq(cardRangePk(5, 6)))).thenReturn(true);
 
@@ -143,7 +164,8 @@ public class HandlerTest extends AbstractConfigWithoutDao {
 
     @Test
     public void shouldReturnFalseForInvalidDeleteInCardRanges() throws Exception {
-        when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong())).thenReturn(true);
+        when(cardRangeRepository.existsFreeSpaceForNewCardRange(eq(PROVIDER_ID), anyLong(), anyLong()))
+                .thenReturn(true);
         when(cardRangeRepository.existsCardRangeEntityByPkEquals(eq(cardRangePk(3, 4)))).thenReturn(true);
         when(cardRangeRepository.existsCardRangeEntityByPkEquals(eq(cardRangePk(5, 6)))).thenReturn(false);
 
@@ -182,19 +204,22 @@ public class HandlerTest extends AbstractConfigWithoutDao {
     public void shouldHandleTransactionIdRequestTest() throws Exception {
         String transactionId = UUID.randomUUID().toString();
 
-        ChallengeFlowTransactionInfoEntity challengeFlowTransactionInfoEntity = ChallengeFlowTransactionInfoEntity.builder()
-                .transactionId(transactionId)
-                .deviceChannel("device")
-                .decoupledAuthMaxTime(LocalDateTime.now())
-                .acsDecConInd("acs")
-                .providerId("1")
-                .messageVersion("2.1.0")
-                .acsUrl("1")
-                .build();
+        ChallengeFlowTransactionInfoEntity challengeFlowTransactionInfoEntity =
+                ChallengeFlowTransactionInfoEntity.builder()
+                        .transactionId(transactionId)
+                        .deviceChannel("device")
+                        .decoupledAuthMaxTime(LocalDateTime.now())
+                        .acsDecConInd("acs")
+                        .providerId("1")
+                        .messageVersion("2.1.0")
+                        .acsUrl("1")
+                        .build();
 
-        when(challengeFlowTransactionInfoRepository.findById(transactionId)).thenReturn(Optional.of(challengeFlowTransactionInfoEntity));
+        when(challengeFlowTransactionInfoRepository.findById(transactionId))
+                .thenReturn(Optional.of(challengeFlowTransactionInfoEntity));
 
-        ChallengeFlowTransactionInfo challengeFlowTransactionInfo = challengeFlowTransactionInfoStorageClient.getChallengeFlowTransactionInfo(transactionId);
+        ChallengeFlowTransactionInfo challengeFlowTransactionInfo =
+                challengeFlowTransactionInfoStorageClient.getChallengeFlowTransactionInfo(transactionId);
         assertEquals(transactionId, challengeFlowTransactionInfo.getTransactionId());
     }
 

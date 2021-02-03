@@ -18,10 +18,10 @@ public class ThreeDsClient {
     private static final String REQUEST_LOG = "-> Req [{}]: providerId={}, request={}";
     private static final String RESPONSE_LOG = "<- Res [{}]: providerId={}, response={}";
 
+    private final RestTemplate restTemplate;
+
     @Value("${client.three-ds-server.url}")
     private String url;
-
-    private final RestTemplate restTemplate;
 
     public Optional<Message> preparationFlow(String providerId, String messageVersion, String serialNumber) {
         String endpoint = "POST " + url;
@@ -37,7 +37,10 @@ public class ThreeDsClient {
         return response;
     }
 
-    private RBKMoneyPreparationRequest rbkMoneyPreparationRequest(String providerId, String messageVersion, String serialNumber) {
+    private RBKMoneyPreparationRequest rbkMoneyPreparationRequest(
+            String providerId,
+            String messageVersion,
+            String serialNumber) {
         RBKMoneyPreparationRequest rbkMoneyPreparationRequest = RBKMoneyPreparationRequest.builder()
                 .providerId(providerId)
                 .serialNumber(serialNumber)

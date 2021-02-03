@@ -1,6 +1,12 @@
 package com.rbkmoney.threeds.server.storage.handler;
 
-import com.rbkmoney.damsel.threeds.server.storage.*;
+import com.rbkmoney.damsel.threeds.server.storage.AccountNumberVersion;
+import com.rbkmoney.damsel.threeds.server.storage.Action;
+import com.rbkmoney.damsel.threeds.server.storage.CardRange;
+import com.rbkmoney.damsel.threeds.server.storage.CardRangesStorageSrv;
+import com.rbkmoney.damsel.threeds.server.storage.DirectoryServerProviderIDNotFound;
+import com.rbkmoney.damsel.threeds.server.storage.UnsupportedVersion;
+import com.rbkmoney.damsel.threeds.server.storage.UpdateCardRangesRequest;
 import com.rbkmoney.threeds.server.storage.service.CardRangeService;
 import com.rbkmoney.threeds.server.storage.utils.CardRangeWrapper;
 import lombok.RequiredArgsConstructor;
@@ -78,6 +84,8 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
             return cardRangeService.existsCardRange(providerId, cardRange);
         }
 
-        throw new IllegalArgumentException(String.format("Action Indicator missing in CardRange, cardRange=%s", toStringHideCardRange(cardRange)));
+        throw new IllegalArgumentException(String.format(
+                "Action Indicator missing in CardRange, cardRange=%s",
+                toStringHideCardRange(cardRange)));
     }
 }

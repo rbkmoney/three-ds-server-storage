@@ -35,7 +35,7 @@ public class CardRangeService {
     @Async
     public void update(UpdateCardRangesRequest request) {
         var providerId = request.getProviderId();
-        var tCardRanges = request.getCardRanges();
+        var thriftCardRanges = request.getCardRanges();
         var isNeedStorageClear = request.isIsNeedStorageClear();
         var serialNumber = Optional.ofNullable(request.getSerialNumber());
 
@@ -45,15 +45,15 @@ public class CardRangeService {
                 providerId,
                 isNeedStorageClear,
                 serialNumber,
-                tCardRanges.size());
+                thriftCardRanges.size());
 
         if (isNeedStorageClear) {
             deleteByProviderId(providerId);
         } else {
-            deleteCardRangeEntities(providerId, tCardRanges);
+            deleteCardRangeEntities(providerId, thriftCardRanges);
         }
 
-        saveCardRangeEntities(providerId, tCardRanges);
+        saveCardRangeEntities(providerId, thriftCardRanges);
         lastUpdatedService.save(providerId);
         if (serialNumber.isPresent()) {
             serialNumberService.save(providerId, serialNumber.get());
@@ -67,7 +67,7 @@ public class CardRangeService {
                 providerId,
                 isNeedStorageClear,
                 serialNumber,
-                tCardRanges.size());
+                thriftCardRanges.size());
     }
 
     public boolean doesNotExistsCardRanges(String providerId) {
@@ -82,7 +82,10 @@ public class CardRangeService {
         long startRange = cardRange.getRangeStart();
         long endRange = cardRange.getRangeEnd();
 
-        boolean existsFreeSpaceForNewCardRange = cardRangeRepository.existsFreeSpaceForNewCardRange(providerId, startRange, endRange);
+        boolean existsFreeSpaceForNewCardRange = cardRangeRepository.existsFreeSpaceForNewCardRange(
+                providerId,
+                startRange,
+                endRange);
 
         log.debug(
                 "CardRange can be added = '{}', providerId={}, cardRange={}",
@@ -112,7 +115,9 @@ public class CardRangeService {
                 .stream()
                 .findFirst();
 
-        log.info("ProviderId by AccountNumber has been found, providerId={}, accountNumber={}", providerId.toString(), hideAccountNumber(accountNumber));
+        log.info("ProviderId by AccountNumber has been found, providerId={}, accountNumber={}",
+                providerId.toString(),
+                hideAccountNumber(accountNumber));
 
         return providerId;
     }
@@ -131,17 +136,17 @@ public class CardRangeService {
                 .orElseGet(Optional::empty);
     }
 
-    void saveCardRangeEntities(String providerId, List<CardRange> tCardRanges) {
+    void saveCardRangeEntities(String providerId, List<CardRange> thriftCardRanges) {
         List<CardRangeEntity> savedCardRanges = new ArrayList<>();
 
-        Iterator<CardRange> iterator = tCardRanges.iterator();
+        Iterator<CardRange> iterator = thriftCardRanges.iterator();
 
         while (iterator.hasNext()) {
-            CardRange tCardRange = iterator.next();
-            Action action = tCardRange.getAction();
+            CardRange thriftCardRange = iterator.next();
+            Action action = thriftCardRange.getAction();
 
             if (action.isSetAddCardRange() || action.isSetModifyCardRange()) {
-                var entity = cardRangeMapper.fromThriftToEntity(tCardRange, providerId);
+                var entity = cardRangeMapper.fromThriftToEntity(thriftCardRange, providerId);
                 savedCardRanges.add(entity);
                 iterator.remove();
             }
@@ -158,17 +163,17 @@ public class CardRangeService {
         }
     }
 
-    void deleteCardRangeEntities(String providerId, List<CardRange> tCardRanges) {
+    void deleteCardRangeEntities(String providerId, List<CardRange> thriftCardRanges) {
         List<CardRangeEntity> deletedCardRanges = new ArrayList<>();
 
-        Iterator<CardRange> iterator = tCardRanges.iterator();
+        Iterator<CardRange> iterator = thriftCardRanges.iterator();
 
         while (iterator.hasNext()) {
-            CardRange tCardRange = iterator.next();
-            Action action = tCardRange.getAction();
+            CardRange thriftCardRange = iterator.next();
+            Action action = thriftCardRange.getAction();
 
             if (action.isSetDeleteCardRange()) {
-                var entity = cardRangeMapper.fromThriftToEntity(tCardRange, providerId);
+                var entity = cardRangeMapper.fromThriftToEntity(thriftCardRange, providerId);
                 deletedCardRanges.add(entity);
                 iterator.remove();
             }

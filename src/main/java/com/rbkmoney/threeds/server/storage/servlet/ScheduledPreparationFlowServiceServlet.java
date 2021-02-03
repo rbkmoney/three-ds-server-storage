@@ -5,8 +5,14 @@ import com.rbkmoney.threeds.server.storage.handler.ScheduledPreparationFlowServi
 import com.rbkmoney.woody.thrift.impl.http.THServiceBuilder;
 import lombok.RequiredArgsConstructor;
 
-import javax.servlet.*;
+import javax.servlet.GenericServlet;
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
+
 import java.io.IOException;
 
 @RequiredArgsConstructor
