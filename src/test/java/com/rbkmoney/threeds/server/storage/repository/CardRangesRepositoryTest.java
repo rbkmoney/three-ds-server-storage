@@ -7,10 +7,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 public class CardRangesRepositoryTest extends AbstractDaoConfig {
 
@@ -119,6 +126,51 @@ public class CardRangesRepositoryTest extends AbstractDaoConfig {
         saved = repository.findByPkProviderId("4");
 
         assertThat(saved).isNotEmpty();
+    }
+
+    @Test
+    public void shouldConcurrentUpdateWithPessimisticLocking() throws InterruptedException {
+        int count = 20;
+
+        // Given
+        List<CardRangeEntity> cardRangeEntities = getCardRangeEntities(count);
+
+        repository.saveAll(cardRangeEntities);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(count);
+
+        // When
+        List<Future<?>> futures = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            String threeDsMethodUrl = i + "_" + UUID.randomUUID().toString();
+
+            cardRangeEntities.forEach(cardRangeEntity -> cardRangeEntity.setThreeDsMethodUrl(threeDsMethodUrl));
+
+            futures.add(executorService.submit(
+                    () -> repository.saveOrUpdateWithPessimisticLocking("4", cardRangeEntities)));
+        }
+
+        futures.forEach(future -> await()
+                .pollDelay(Duration.ZERO)
+                .pollInterval(10, TimeUnit.MILLISECONDS)
+                .timeout(10, TimeUnit.SECONDS)
+                .until(future::isDone));
+
+        List<CardRangeEntity> saved = repository.findByPkProviderId("4");
+
+        // Then
+        assertThat(saved).hasSize(count);
+    }
+
+    private List<CardRangeEntity> getCardRangeEntities(long count) {
+        List<CardRangeEntity> cardRanges = new ArrayList<>();
+
+        for (long i = 0; i < count; i++) {
+            CardRangeEntity range = entity("4", i, i + 1);
+
+            cardRanges.add(range);
+        }
+        return cardRanges;
     }
 
     private CardRangeEntity entity(String providerId, long rangeStart, long rangeEnd) {

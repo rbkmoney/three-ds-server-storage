@@ -155,7 +155,7 @@ public class CardRangeService {
         if (!savedCardRanges.isEmpty()) {
             log.info("Trying to save CardRanges, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
 
-            cardRangeRepository.saveAll(savedCardRanges);
+            cardRangeRepository.saveOrUpdateWithPessimisticLocking(providerId, savedCardRanges);
 
             log.info("CardRanges has been saved, providerId={}, cardRanges={}", providerId, savedCardRanges.size());
         } else {
