@@ -144,8 +144,6 @@ public class CardRangesRepositoryTest extends AbstractDaoConfig {
         for (int i = 0; i < count; i++) {
             String threeDsMethodUrl = i + "_" + UUID.randomUUID().toString();
 
-            System.out.println(threeDsMethodUrl);
-
             cardRangeEntities.forEach(cardRangeEntity -> cardRangeEntity.setThreeDsMethodUrl(threeDsMethodUrl));
 
             futures.add(executorService.submit(
