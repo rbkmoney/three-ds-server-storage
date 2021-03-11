@@ -44,6 +44,7 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
 
         List<CardRange> invalidCardRanges = cardRanges.stream()
                 .filter(not(cr -> isValidCardRange(providerId, cr)))
+                .limit(10)
                 .collect(Collectors.toList());
 
         if (!invalidCardRanges.isEmpty()) {
