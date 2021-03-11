@@ -51,7 +51,9 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
                     .map(CardRangeWrapper::toStringHideCardRange)
                     .collect(Collectors.joining(", ", "[", "]"));
 
-            log.warn("CardRanges is invalid, providerId={}, cardRanges={}", providerId, hideCardRanges);
+            log.warn("Part of CardRanges is invalid, providerId={}, invalidCardRanges={}", providerId,
+                    invalidCardRanges.size());
+            log.debug("Part of CardRanges is invalid, providerId={}, invalidCardRanges={}", providerId, hideCardRanges);
         } else {
             log.info("CardRanges is valid, providerId={}, cardRanges={}", providerId, cardRanges.size());
         }
