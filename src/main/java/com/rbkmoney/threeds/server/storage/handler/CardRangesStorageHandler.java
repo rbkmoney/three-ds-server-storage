@@ -1,20 +1,13 @@
 package com.rbkmoney.threeds.server.storage.handler;
 
-import com.rbkmoney.damsel.threeds.server.storage.AccountNumberVersion;
-import com.rbkmoney.damsel.threeds.server.storage.Action;
-import com.rbkmoney.damsel.threeds.server.storage.CardRange;
-import com.rbkmoney.damsel.threeds.server.storage.CardRangesStorageSrv;
-import com.rbkmoney.damsel.threeds.server.storage.DirectoryServerProviderIDNotFound;
-import com.rbkmoney.damsel.threeds.server.storage.UnsupportedVersion;
-import com.rbkmoney.damsel.threeds.server.storage.UpdateCardRangesRequest;
+import com.rbkmoney.damsel.threeds.server.storage.*;
 import com.rbkmoney.threeds.server.storage.service.CardRangeService;
-import com.rbkmoney.threeds.server.storage.utils.CardRangeWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import static com.rbkmoney.threeds.server.storage.utils.CardRangeWrapper.toStringHideCardRange;
 import static java.util.function.Predicate.not;
@@ -42,23 +35,18 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
             return true;
         }
 
-        List<CardRange> invalidCardRanges = cardRanges.stream()
+        Optional<CardRange> invalidCardRange = cardRanges.stream()
                 .filter(not(cr -> isValidCardRange(providerId, cr)))
-                .collect(Collectors.toList());
+                .findFirst();
 
-        if (!invalidCardRanges.isEmpty()) {
-            String hideCardRanges = invalidCardRanges.stream()
-                    .map(CardRangeWrapper::toStringHideCardRange)
-                    .collect(Collectors.joining(", ", "[", "]"));
-
-            log.warn("Part of CardRanges is invalid, providerId={}, invalidCardRanges={}", providerId,
-                    invalidCardRanges.size());
-            log.debug("Part of CardRanges is invalid, providerId={}, invalidCardRanges={}", providerId, hideCardRanges);
+        if (invalidCardRange.isPresent()) {
+            log.warn("Part of CardRanges is invalid, providerId={}, cardRanges={}", providerId,
+                    cardRanges.size());
         } else {
-            log.info("CardRanges is valid, providerId={}, cardRanges={}", providerId, cardRanges.size());
+            log.info("All cardRanges is valid, providerId={}, cardRanges={}", providerId, cardRanges.size());
         }
 
-        return invalidCardRanges.isEmpty();
+        return invalidCardRange.isEmpty();
     }
 
     @Override
