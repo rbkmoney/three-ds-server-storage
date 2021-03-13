@@ -40,7 +40,7 @@ public class CardRangesStorageHandler implements CardRangesStorageSrv.Iface {
                 .findFirst();
 
         if (invalidCardRange.isPresent()) {
-            log.warn("Part of CardRanges is invalid, providerId={}, invalidCardRanges={}", providerId,
+            log.warn("Part of CardRanges is invalid, providerId={}, cardRanges={}", providerId,
                     cardRanges.size());
         } else {
             log.info("All cardRanges is valid, providerId={}, cardRanges={}", providerId, cardRanges.size());
