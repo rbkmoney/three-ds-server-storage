@@ -62,3 +62,6 @@ client:
 
 asyncConfig:
   enabled: true
+
+rest-handler:
+  enabled: false

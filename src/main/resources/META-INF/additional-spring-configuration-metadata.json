@@ -1,0 +1,17 @@
+{
+  "hints": [
+    {
+      "name": "rest-handler.enabled",
+      "values": [
+        {
+          "value": "true",
+          "description": "Use for enable REST endpoint."
+        },
+        {
+          "value": "false",
+          "description": "Use for disable REST endpoint."
+        }
+      ]
+    }
+  ]
+}
