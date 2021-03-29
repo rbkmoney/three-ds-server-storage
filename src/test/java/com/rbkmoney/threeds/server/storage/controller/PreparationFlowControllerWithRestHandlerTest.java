@@ -36,7 +36,7 @@ public class PreparationFlowControllerWithRestHandlerTest extends AbstractConfig
         preparationRequest.setProviderId("visa");
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post("/preparation")
+                .post("/three-ds-server-storage/rest/preparation-flow")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(preparationRequest));
