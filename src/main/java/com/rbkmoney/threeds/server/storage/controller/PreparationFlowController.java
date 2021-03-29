@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@ConditionalOnProperty(name = "rest-handler.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "rest-endpoint.enabled", havingValue = "true")
 @RequiredArgsConstructor
 @Slf4j
 public class PreparationFlowController {
 
     private final PreparationFlowService preparationFlowService;
 
-    @PostMapping("/preparation")
+    @PostMapping("/three-ds-server-storage/rest/preparation-flow")
     @ResponseStatus(HttpStatus.OK)
     public void preparationHandler(@RequestBody PreparationRequest request) {
         log.info("Init RBKMoney preparation flow, providerId={}", request.getProviderId());

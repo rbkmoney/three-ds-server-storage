@@ -63,5 +63,5 @@ client:
 asyncConfig:
   enabled: true
 
-rest-handler:
+rest-endpoint:
   enabled: false

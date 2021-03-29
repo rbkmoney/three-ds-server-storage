@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestPropertySource(properties = "rest-handler.enabled=false")
+@TestPropertySource(properties = "rest-endpoint.enabled=false")
 @AutoConfigureMockMvc
 public class PreparationFlowControllerNotFoundTest extends AbstractConfigWithoutDao {
 
