@@ -1,7 +1,7 @@
 {
   "hints": [
     {
-      "name": "rest-handler.enabled",
+      "name": "rest-endpoint.enabled",
       "values": [
         {
           "value": "true",

@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestPropertySource(properties = "rest-handler.enabled=true")
+@TestPropertySource(properties = "rest-endpoint.enabled=true")
 @AutoConfigureMockMvc
 public class PreparationFlowControllerWithRestHandlerTest extends AbstractConfigWithoutDao {
 
@@ -36,7 +36,7 @@ public class PreparationFlowControllerWithRestHandlerTest extends AbstractConfig
         preparationRequest.setProviderId("visa");
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post("/preparation")
+                .post("/three-ds-server-storage/rest/preparation-flow")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(preparationRequest));

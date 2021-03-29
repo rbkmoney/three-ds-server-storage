@@ -31,7 +31,7 @@ management:
 
 spring:
   application:
-    name: @project.name@
+    name: '@project.name@'
   output:
     ansi:
       enabled: always
@@ -63,5 +63,5 @@ client:
 asyncConfig:
   enabled: true
 
-rest-handler:
+rest-endpoint:
   enabled: false

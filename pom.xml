@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.rbkmoney</groupId>
         <artifactId>service-parent-pom</artifactId>
-        <version>1.0.8</version>
+        <version>1.0.9</version>
     </parent>
 
     <artifactId>three-ds-server-storage</artifactId>
@@ -17,7 +17,6 @@
     <description>three-ds-server-storage</description>
 
     <properties>
-        <java.version>11</java.version>
         <server.port>8022</server.port>
         <management.port>8023</management.port>
         <exposed.ports>${server.port} ${management.port}</exposed.ports>
@@ -121,7 +120,6 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -139,7 +137,6 @@
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
-            <version>4.0.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
