@@ -27,6 +27,8 @@ public class ChallengeFlowTransactionInfoRepositoryTest extends AbstractDaoConfi
                 .providerId("1")
                 .messageVersion("2.1.0")
                 .acsUrl("1")
+                .eci("eci")
+                .authenticationValue("value")
                 .build();
 
         repository.save(trap);
@@ -43,6 +45,8 @@ public class ChallengeFlowTransactionInfoRepositoryTest extends AbstractDaoConfi
                 .providerId("1")
                 .messageVersion("2.1.0")
                 .acsUrl("1")
+                .eci("eci")
+                .authenticationValue("value")
                 .build();
 
         // When
@@ -65,6 +69,8 @@ public class ChallengeFlowTransactionInfoRepositoryTest extends AbstractDaoConfi
                 .providerId("1")
                 .messageVersion("2.1.0")
                 .acsUrl("1")
+                .eci("eci")
+                .authenticationValue("value")
                 .build();
 
         // When
