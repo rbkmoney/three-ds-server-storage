@@ -18,6 +18,8 @@ public class ChallengeFlowTransactionInfoMapper {
                 .providerId(domain.getProviderId())
                 .messageVersion(domain.getMessageVersion())
                 .acsUrl(domain.getAcsUrl())
+                .eci(domain.getEci())
+                .authenticationValue(domain.getAuthenticationValue())
                 .build();
     }
 
@@ -29,6 +31,8 @@ public class ChallengeFlowTransactionInfoMapper {
                 .setAcsDecConInd(entity.getAcsDecConInd())
                 .setProviderId(entity.getProviderId())
                 .setMessageVersion(entity.getMessageVersion())
-                .setAcsUrl(entity.getAcsUrl());
+                .setAcsUrl(entity.getAcsUrl())
+                .setEci(entity.getEci())
+                .setAuthenticationValue(entity.getAuthenticationValue());
     }
 }

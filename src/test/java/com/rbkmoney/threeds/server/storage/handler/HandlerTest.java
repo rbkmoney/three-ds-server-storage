@@ -213,6 +213,8 @@ public class HandlerTest extends AbstractConfigWithoutDao {
                         .providerId("1")
                         .messageVersion("2.1.0")
                         .acsUrl("1")
+                        .eci("eci")
+                        .authenticationValue("value")
                         .build();
 
         when(challengeFlowTransactionInfoRepository.findById(transactionId))

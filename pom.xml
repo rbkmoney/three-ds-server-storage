@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>three-ds-server-storage</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>three-ds-server-storage</name>
@@ -54,13 +54,13 @@
         </dependency>
         <dependency>
             <groupId>com.rbkmoney</groupId>
-            <artifactId>three-ds-server-storage-proto</artifactId>
-            <version>1.23-e8e35de</version>
+            <artifactId>three-ds-server-domain-lib</artifactId>
+            <version>1.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney</groupId>
-            <artifactId>three-ds-server-domain-lib</artifactId>
-            <version>1.2.3</version>
+            <artifactId>three-ds-server-storage-proto</artifactId>
+            <version>1.24-ab05a55</version>
         </dependency>
 
         <!--spring-->
